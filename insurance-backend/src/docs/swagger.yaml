@@ -1,0 +1,13 @@
+openapi: 3.0.0
+info:
+  title: Insurance Backend API
+  version: 1.0.0
+paths:
+  /api/auth/login:
+    post:
+      summary: Admin login
+      requestBody:
+        required: true
+      responses:
+        '200':
+          description: OK

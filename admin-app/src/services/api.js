@@ -2,6 +2,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BASE_URL } from '../config';
 import * as DocumentPicker from 'expo-document-picker';
+import { Platform } from 'react-native';
 
 const jsonHeaders = { 'Content-Type': 'application/json' };
 

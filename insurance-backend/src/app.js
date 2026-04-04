@@ -3,6 +3,8 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+import bcrypt from 'bcrypt';
+import pool from './config/db.js';
 import authRoutes from './routes/auth.routes.js';
 import clientsRoutes from './routes/clients.routes.js';
 import policiesRoutes from './routes/policies.routes.js';
@@ -16,6 +18,27 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 
 dotenv.config();
+
+// Auto-seed admin user on startup
+const seedAdminUser = async () => {
+  try {
+    const username = process.env.SEED_ADMIN_USER || 'admin';
+    const password = process.env.SEED_ADMIN_PASS || 'Admin@123';
+    const name = process.env.SEED_ADMIN_NAME || 'Super Admin';
+    
+    const [rows] = await pool.query('SELECT * FROM admins WHERE username=?', [username]);
+    if (rows.length === 0) {
+      const hash = await bcrypt.hash(password, 10);
+      await pool.query('INSERT INTO admins (username, password, name, role) VALUES (?,?,?,?)', 
+        [username, hash, name, 'admin']);
+      console.log('✅ Admin user created:', username);
+    } else {
+      console.log('✓ Admin user already exists');
+    }
+  } catch (error) {
+    console.error('⚠️ Failed to seed admin user:', error.message);
+  }
+};
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -54,8 +77,10 @@ try {
 
 app.get('/', (req, res) => res.json({ status: 'ok', env: process.env.NODE_ENV || 'dev' }));
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`Server running on port ${PORT}`);
+  // Seed admin user on startup
+  await seedAdminUser();
   // start any scheduled jobs
   scheduleRenewalJob();
 });

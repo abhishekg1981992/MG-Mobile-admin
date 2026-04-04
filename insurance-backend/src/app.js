@@ -77,10 +77,13 @@ try {
 
 app.get('/', (req, res) => res.json({ status: 'ok', env: process.env.NODE_ENV || 'dev' }));
 
-app.listen(PORT, async () => {
+const server = app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-  // Seed admin user on startup
-  await seedAdminUser();
   // start any scheduled jobs
   scheduleRenewalJob();
+  
+  // Seed admin user in background (non-blocking)
+  seedAdminUser().catch(err => {
+    console.error('Background seeding failed:', err.message);
+  });
 });

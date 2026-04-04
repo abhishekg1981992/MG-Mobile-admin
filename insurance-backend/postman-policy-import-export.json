@@ -1,0 +1,568 @@
+{
+    "info": {
+        "_postman_id": "manthan-guru-policy-excel",
+        "name": "Manthan Guru - Policy Excel Import/Export",
+        "description": "API collection for importing policy data and exporting clients/policies",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Authentication",
+            "item": [
+                {
+                    "name": "Login",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "  const jsonData = pm.response.json();",
+                                    "  pm.environment.set('auth_token', jsonData.token);",
+                                    "  console.log('Token saved:', jsonData.token.substring(0, 20) + '...');",
+                                    "}"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/auth/login",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "login"
+                            ]
+                        },
+                        "description": "Login to get JWT token. Token is automatically saved to {{auth_token}} variable."
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Policy Import/Export",
+            "item": [
+                {
+                    "name": "Import Policy Data from Excel",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "  const response = pm.response.json();",
+                                    "  console.log('\\n=== IMPORT SUMMARY ===');",
+                                    "  console.log('Sheets Processed:', response.results.sheets_processed);",
+                                    "  console.log('Clients Created:', response.results.clients_created);",
+                                    "  console.log('Clients Updated:', response.results.clients_updated);",
+                                    "  console.log('Policies Created:', response.results.policies_created);",
+                                    "  console.log('Policies Updated:', response.results.policies_updated);",
+                                    "  console.log('Errors:', response.results.errors);",
+                                    "  console.log('\\nFirst 10 Details:');",
+                                    "  response.results.details.slice(0, 10).forEach((d, i) => {",
+                                    "    console.log(`${i+1}. Sheet: ${d.sheet}, Row: ${d.row}, Status: ${d.status}${d.error ? ', Error: ' + d.error : ''}`);",
+                                    "  });",
+                                    "}"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{auth_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "file",
+                                    "type": "file",
+                                    "src": "/path/to/client_data.xlsx",
+                                    "disabled": false
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/clients/import-excel",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "clients",
+                                "import-excel"
+                            ]
+                        },
+                        "description": "Upload Excel file with policy data from multiple sheets.\n\nExpected columns:\n- Assured Name / Proposar Name (client name)\n- Mobile (client phone, unique key)\n- Policy Number / Policy No. (policy ID)\n- Due Date, Premium, Sum Insured (optional)\n\nProcess:\n1. Click 'Select File' and choose your client_data.xlsx\n2. Make sure auth_token is set (login first)\n3. Send the request\n4. Review the summary in console output\n\nResponse includes:\n- Clients created/updated\n- Policies created/updated\n- Detailed breakdown of what happened"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Export Clients & Policies",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "  console.log('Export successful - file downloaded');",
+                                    "}"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{auth_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/clients/export",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "clients",
+                                "export"
+                            ]
+                        },
+                        "description": "Export all clients and policies as Excel file.\n\nOutput file has 2 sheets:\n1. Clients - ID, Name, Phone, Email, Address, Created Date\n2. Policies - Client Name, Phone, Policy Number, Insurance Company, Premium, Sum Insured, Dates, Status\n\nFile will be auto-downloaded with format: clients_policies_YYYY-MM-DD.xlsx\n\nTo use:\n1. Send the request\n2. Postman will download the file\n3. File appears in your Downloads folder"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get All Policies with Client Details",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "  const response = pm.response.json();",
+                                    "  console.log('\\n=== POLICIES SUMMARY ===');",
+                                    "  console.log('Total Policies:', response.total);",
+                                    "  console.log('\\nFirst 5 Policies:');",
+                                    "  response.policies.slice(0, 5).forEach((p, i) => {",
+                                    "    console.log(`${i+1}. ID: ${p.id}, Policy#: ${p.policy_number}, Client: ${p.client_name}, Provider: ${p.provider}, Premium: ${p.premium_amount}`);",
+                                    "  });",
+                                    "  console.log('\\n[Scroll down to see all policies in response body]');",
+                                    "}"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{auth_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/policies/all-with-details",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "policies",
+                                "all-with-details"
+                            ]
+                        },
+                        "description": "Get all policies with complete client details for data verification.\n\nReturns:\n- Total count of all policies\n- Complete policy information (ID, number, type, premium, dates, status, etc.)\n- Associated client details (name, phone, email, address)\n\nUseful for:\n- Verifying policy-client relationships\n- Checking data consistency\n- Identifying discrepancies\n- Auditing imported data\n- Ensuring no orphaned policies\n\nEach policy record includes:\n- policy_id, client_id, policy_number, policy_type\n- provider, premium_amount, sum_assured\n- start_date, end_date, status\n- client_name, client_phone, client_email, client_address"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Client Management - Standard",
+            "item": [
+                {
+                    "name": "Get All Clients",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{auth_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/clients",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "clients"
+                            ]
+                        },
+                        "description": "Fetch all clients from database"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Client by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{auth_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/clients/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "clients",
+                                "1"
+                            ]
+                        },
+                        "description": "Get specific client with their policies and documents"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Client Manually",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{auth_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Test Client\",\n  \"phone\": \"+91-9999999999\",\n  \"email\": \"\",\n  \"address\": \"Test Address\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/clients",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "clients"
+                            ]
+                        },
+                        "description": "Create a single client manually. Email is optional."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Client",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{auth_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Updated Name\",\n  \"phone\": \"+91-9999999999\",\n  \"email\": \"\",\n  \"address\": \"Updated Address\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/clients/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "clients",
+                                "1"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Client",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{auth_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/clients/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "clients",
+                                "1"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Test Workflows",
+            "item": [
+                {
+                    "name": "Workflow: Complete Import & Verify",
+                    "item": [
+                        {
+                            "name": "Step 1: Login",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/auth/login",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "auth",
+                                        "login"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Step 2: Import Policy Excel File",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{auth_token}}"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "formdata",
+                                    "formdata": [
+                                        {
+                                            "key": "file",
+                                            "type": "file",
+                                            "src": "/path/to/client_data.xlsx"
+                                        }
+                                    ]
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/clients/import-excel",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "clients",
+                                        "import-excel"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Step 3: Get All Clients (Verify Import)",
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{auth_token}}"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{base_url}}/api/clients",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "clients"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Step 4: Export Clients & Policies (Backup)",
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{auth_token}}"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{base_url}}/api/clients/export",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "clients",
+                                        "export"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        }
+                    ]
+                },
+                {
+                    "name": "Workflow: Backup & Restore",
+                    "item": [
+                        {
+                            "name": "Step 1: Login",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/auth/login",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "auth",
+                                        "login"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Step 2: Export Current Data (Backup)",
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{auth_token}}"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{base_url}}/api/clients/export",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "clients",
+                                        "export"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Step 3: Later - Re-import the Backup",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{auth_token}}"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "formdata",
+                                    "formdata": [
+                                        {
+                                            "key": "file",
+                                            "type": "file",
+                                            "src": "/path/to/backup.xlsx"
+                                        }
+                                    ]
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/clients/import-excel",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "clients",
+                                        "import-excel"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:3000",
+            "type": "string"
+        },
+        {
+            "key": "auth_token",
+            "value": "",
+            "type": "string",
+            "description": "JWT authentication token (set automatically after login)"
+        }
+    ]
+}

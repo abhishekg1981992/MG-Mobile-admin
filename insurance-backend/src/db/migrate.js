@@ -31,13 +31,39 @@ export async function runMigrations() {
       .map(s => s.trim())
       .filter(s => s.length > 0 && !s.startsWith('--'));
 
+    const created = [];
+    const failed = [];
+
     for (const statement of statements) {
-      await connection.query(statement);
+      // Extract table name from CREATE TABLE [IF NOT EXISTS] <name>
+      const match = statement.match(/CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?`?(\w+)`?/i);
+      const tableName = match ? match[1] : '(unknown)';
+
+      console.log(`  ⏳ Creating table: ${tableName}`);
+      try {
+        await connection.query(statement);
+        console.log(`  ✓ Created table: ${tableName}`);
+        created.push(tableName);
+      } catch (err) {
+        console.error(`  ✗ Failed table: ${tableName} (${err.message})`);
+        failed.push({ tableName, error: err.message });
+      }
     }
 
-    console.log('✅ Database migrations completed successfully');
+    console.log('');
+    console.log(`✅ Database migrations completed — ${created.length} created, ${failed.length} failed`);
+
+    if (failed.length > 0) {
+      console.error('❌ The following tables failed to create:');
+      for (const { tableName, error } of failed) {
+        console.error(`   • ${tableName}: ${error}`);
+      }
+      throw new Error(`Migration completed with ${failed.length} failure(s): ${failed.map(f => f.tableName).join(', ')}`);
+    }
   } catch (error) {
-    console.error('❌ Database migration failed:', error.message);
+    if (!error.message.startsWith('Migration completed with')) {
+      console.error('❌ Database migration failed:', error.message);
+    }
     throw error;
   } finally {
     if (connection) {

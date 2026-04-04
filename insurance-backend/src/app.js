@@ -14,6 +14,7 @@ import claimsRoutes from './routes/claims.routes.js';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import { scheduleRenewalJob } from './utils/cronJobs.js';
+import { runMigrations } from './db/migrate.js';
 import { fileURLToPath } from 'url';
 import path from 'path';
 
@@ -77,13 +78,16 @@ try {
 
 app.get('/', (req, res) => res.json({ status: 'ok', env: process.env.NODE_ENV || 'dev' }));
 
-const server = app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  // start any scheduled jobs
-  scheduleRenewalJob();
-  
-  // Seed admin user in background (non-blocking)
-  seedAdminUser().catch(err => {
-    console.error('Background seeding failed:', err.message);
+// Run migrations then start the server
+runMigrations()
+  .then(() => seedAdminUser())
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+      scheduleRenewalJob();
+    });
+  })
+  .catch(err => {
+    console.error('❌ Startup failed:', err.message);
+    process.exit(1);
   });
-});

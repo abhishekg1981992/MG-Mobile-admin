@@ -12,7 +12,13 @@ import claimsRoutes from './routes/claims.routes.js';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import { scheduleRenewalJob } from './utils/cronJobs.js';
+import { fileURLToPath } from 'url';
+import path from 'path';
+
 dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -39,7 +45,8 @@ app.use('/api/claims', claimsRoutes);
 
 // Swagger (yaml)
 try {
-  const swaggerDocument = YAML.load('./src/docs/swagger.yaml');
+  const swaggerPath = path.join(__dirname, 'docs', 'swagger.yaml');
+  const swaggerDocument = YAML.load(swaggerPath);
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 } catch (e) {
   console.warn('Swagger docs not available:', e.message);

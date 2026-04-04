@@ -25,6 +25,40 @@ export const getPolicies = async (req, res) => {
   }
 };
 
+export const getAllPoliciesWithDetails = async (req, res) => {
+  try {
+    const [rows] = await pool.query(`
+      SELECT 
+        p.id,
+        p.client_id,
+        p.provider,
+        p.policy_number,
+        p.policy_type,
+        p.premium_amount,
+        p.sum_assured,
+        p.start_date,
+        p.end_date,
+        p.frequency,
+        p.status,
+        p.created_at,
+        c.name as client_name,
+        c.phone as client_phone,
+        c.email as client_email,
+        c.address as client_address
+      FROM policies p
+      LEFT JOIN clients c ON p.client_id = c.id
+      ORDER BY p.id DESC
+    `);
+    return res.json({
+      total: rows.length,
+      policies: rows
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: err.message });
+  }
+};
+
 export const getPolicyById = async (req, res) => {
   try {
     const id = req.params.id;

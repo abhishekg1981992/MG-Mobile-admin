@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS policies (
   id INT AUTO_INCREMENT PRIMARY KEY,
   client_id INT,
   provider VARCHAR(255),
-  policy_number VARCHAR(255),
+  policy_number VARCHAR(255) NOT NULL,
   policy_type VARCHAR(100),
   premium_amount DECIMAL(12,2),
   sum_assured DECIMAL(12,2),

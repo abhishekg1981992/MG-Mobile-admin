@@ -35,5 +35,8 @@ jobs:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
+      - name: Ensure EAS project is configured
+        run: eas init --id 394513c4-fa8f-4ecf-8f5e-e54e01dd0863 --non-interactive
+
       - name: Build Android APK
         run: eas build --platform android --profile preview --non-interactive

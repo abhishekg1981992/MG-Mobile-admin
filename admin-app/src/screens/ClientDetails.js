@@ -58,8 +58,10 @@ export default function ClientDetails({ route, navigation }) {
       <Card style={{ marginBottom: 12 }}>
         <Card.Content>
           <Text variant="titleLarge">{client.name}</Text>
-          <Text variant="bodyMedium">{client.phone} • {client.email}</Text>
-          <Text variant="bodyMedium" style={{ marginTop: 8 }}>{client.address}</Text>
+          {(client.phone || client.email) ? (
+            <Text variant="bodyMedium">{[client.phone, client.email].filter(Boolean).join(' • ')}</Text>
+          ) : null}
+          {client.address ? <Text variant="bodyMedium" style={{ marginTop: 8 }}>{client.address}</Text> : null}
         </Card.Content>
         <Card.Actions>
           <Button onPress={() => navigation.navigate('AddEditClient', { client })}>Edit</Button>
@@ -68,9 +70,16 @@ export default function ClientDetails({ route, navigation }) {
       </Card>
 
       <Text variant="titleLarge">Policies</Text>
-      {client.policies?.length ? client.policies.map(p => (
-        <List.Item key={String(p.id)} title={`${p.policy_number} — ${p.provider}`} description={`${p.policy_type} • ₹${p.premium_amount}`} />
-      )) : <Text variant="bodyMedium">No policies</Text>}
+      {client.policies?.length ? client.policies.map(p => {
+        const desc = [p.policy_type, p.premium_amount != null ? `₹${p.premium_amount}` : null].filter(Boolean).join(' • ');
+        return (
+          <List.Item
+            key={String(p.id)}
+            title={[p.policy_number, p.provider].filter(Boolean).join(' — ')}
+            description={desc || undefined}
+          />
+        );
+      }) : <Text variant="bodyMedium">No policies</Text>}
 
       <Text variant="titleLarge" style={{ marginTop: 12 }}>Documents</Text>
       {client.documents?.length ? client.documents.map(doc => (

@@ -1,39 +1,109 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, FlatList, RefreshControl } from 'react-native';
+import { Card, Text, Button, ActivityIndicator, SegmentedButtons } from 'react-native-paper';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { apiGet } from '../services/api';
 
-export default function RenewalsScreen() {
+function isSameDay(d1, d2) {
+  return d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate();
+}
+
+function isThisWeek(date) {
+  const now = new Date();
+  const start = new Date(now);
+  start.setDate(now.getDate() - now.getDay());
+  start.setHours(0, 0, 0, 0);
+  const end = new Date(start);
+  end.setDate(start.getDate() + 7);
+  return date >= start && date < end;
+}
+
+function isThisMonth(date) {
+  const now = new Date();
+  return date.getFullYear() === now.getFullYear() && date.getMonth() === now.getMonth();
+}
+
+export default function RenewalsScreen({ navigation }) {
+  const insets = useSafeAreaInsets();
   const [loading, setLoading] = useState(true);
-  const [renewals, setRenewals] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [policies, setPolicies] = useState([]);
+  const [filter, setFilter] = useState('month');
+
+  const fetchRenewals = async () => {
+    setLoading(true);
+    try {
+      const res = await apiGet('/api/renewals/due');
+      setPolicies(Array.isArray(res) ? res : []);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    (async () => {
-      try {
-        const res = await apiGet('/api/renewals');
-        setRenewals(res || []);
-      } catch (e) { console.error(e); }
-      finally { setLoading(false); }
-    })();
+    fetchRenewals();
   }, []);
 
-  if (loading) return <ActivityIndicator style={{flex:1}} />;
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchRenewals();
+    setRefreshing(false);
+  };
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const filtered = policies.filter(p => {
+    if (!p.end_date) return false;
+    const endDate = new Date(p.end_date);
+    endDate.setHours(0, 0, 0, 0);
+    if (filter === 'today') return isSameDay(endDate, today);
+    if (filter === 'week') return isThisWeek(endDate);
+    if (filter === 'month') return isThisMonth(endDate);
+    return false;
+  });
+
+  const renderItem = ({ item }) => (
+    <Card style={{ marginVertical: 6 }} onPress={() => navigation.navigate('PolicyDetails', { id: item.id })}>
+      <Card.Content>
+        <Text variant="titleMedium">{item.client_name || 'Unknown Client'}</Text>
+        <Text variant="bodyMedium">{item.provider} • {item.policy_number}</Text>
+        <Text variant="bodySmall" style={{ color: '#d32f2f', marginTop: 4 }}>
+          Due: {new Date(item.end_date).toLocaleDateString()}
+        </Text>
+      </Card.Content>
+    </Card>
+  );
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Renewals</Text>
-      <FlatList data={renewals} keyExtractor={i => String(i.id)} renderItem={({item}) => (
-        <View style={styles.card}>
-          <Text style={styles.name}>{item.policy_number}</Text>
-          <Text>{item.renewal_date} • {item.status}</Text>
-        </View>
-      )} />
+    <View style={{ flex: 1, padding: 12 }}>
+      <SegmentedButtons
+        value={filter}
+        onValueChange={setFilter}
+        buttons={[
+          { value: 'today', label: 'Today' },
+          { value: 'week', label: 'This Week' },
+          { value: 'month', label: 'This Month' },
+        ]}
+        style={{ marginBottom: 12 }}
+      />
+      {loading ? (
+        <ActivityIndicator style={{ marginTop: 24 }} animating />
+      ) : filtered.length === 0 ? (
+        <Text variant="bodyMedium" style={{ textAlign: 'center', marginTop: 24, color: '#888' }}>
+          No renewals due {filter === 'today' ? 'today' : filter === 'week' ? 'this week' : 'this month'}
+        </Text>
+      ) : (
+        <FlatList
+          data={filtered}
+          keyExtractor={i => String(i.id)}
+          renderItem={renderItem}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+          contentContainerStyle={{ paddingBottom: 16 + insets.bottom }}
+        />
+      )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 12 },
-  title: { fontSize: 20, marginBottom: 12 },
-  card: { padding: 12, borderRadius: 8, borderWidth: 1, borderColor: '#eee', marginBottom: 8 },
-  name: { fontWeight: 'bold' }
-});

@@ -63,7 +63,7 @@ export default function PolicyDetails({ route, navigation }) {
         </Card.Content>
         <Card.Actions>
           <Button onPress={() => navigation.navigate('AddEditPolicy', { policy })}>Edit</Button>
-          <Button textColor="red" onPress={handleDelete}>Delete</Button>
+          <Button mode="contained" buttonColor="#d32f2f" textColor="#fff" onPress={handleDelete}>Delete</Button>
         </Card.Actions>
       </Card>
     </ScrollView>

@@ -39,4 +39,67 @@ jobs:
         run: eas init --id 394513c4-fa8f-4ecf-8f5e-e54e01dd0863 --non-interactive
 
       - name: Build Android APK
-        run: eas build --platform android --profile preview --non-interactive
+        id: eas_build
+        run: |
+          BUILD_JSON=$(eas build --platform android --profile preview --non-interactive --json 2>/dev/null | tail -1)
+          APK_URL=$(echo "$BUILD_JSON" | jq -r '.[0].artifacts.buildUrl // empty')
+          if [ -z "$APK_URL" ]; then
+            echo "Could not extract APK URL from EAS output, fetching latest build..."
+            APK_URL=$(eas build:list --platform android --status finished --limit 1 --json 2>/dev/null | jq -r '.[0].artifacts.buildUrl')
+          fi
+          echo "apk_url=$APK_URL" >> "$GITHUB_OUTPUT"
+          echo "APK URL: $APK_URL"
+
+      - name: Download APK
+        run: |
+          curl -L -o admin-app.apk "${{ steps.eas_build.outputs.apk_url }}"
+          ls -lh admin-app.apk
+
+      - name: Upload APK to Google Drive
+        env:
+          GDRIVE_CREDENTIALS: ${{ secrets.GDRIVE_CREDENTIALS }}
+          GDRIVE_FOLDER_ID: ${{ secrets.GDRIVE_FOLDER_ID }}
+        run: |
+          echo "$GDRIVE_CREDENTIALS" > /tmp/gdrive-creds.json
+
+          # Install googleapis
+          npm init -y > /dev/null 2>&1
+          npm install googleapis > /dev/null 2>&1
+
+          node << 'SCRIPT'
+          const { google } = require('googleapis');
+          const fs = require('fs');
+          const path = require('path');
+
+          async function upload() {
+            const auth = new google.auth.GoogleAuth({
+              keyFile: '/tmp/gdrive-creds.json',
+              scopes: ['https://www.googleapis.com/auth/drive.file'],
+            });
+
+            const drive = google.drive({ version: 'v3', auth });
+            const folderId = process.env.GDRIVE_FOLDER_ID;
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+            const fileName = `admin-app-${timestamp}.apk`;
+
+            const res = await drive.files.create({
+              requestBody: {
+                name: fileName,
+                parents: [folderId],
+              },
+              media: {
+                mimeType: 'application/vnd.android.package-archive',
+                body: fs.createReadStream('admin-app.apk'),
+              },
+              fields: 'id, name, webViewLink',
+            });
+
+            console.log(`Uploaded: ${res.data.name}`);
+            console.log(`File ID: ${res.data.id}`);
+            console.log(`Link: ${res.data.webViewLink}`);
+          }
+
+          upload().catch(err => { console.error(err); process.exit(1); });
+          SCRIPT
+
+          rm -f /tmp/gdrive-creds.json

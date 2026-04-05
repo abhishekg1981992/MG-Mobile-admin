@@ -11,6 +11,31 @@ export const listRenewals = async (req, res) => {
   }
 };
 
+export const getRenewalsDue = async (req, res) => {
+  try {
+    const [rows] = await pool.query(`
+      SELECT 
+        p.id,
+        p.policy_number,
+        p.provider,
+        p.policy_type,
+        p.premium_amount,
+        p.end_date,
+        p.status,
+        c.name as client_name,
+        c.phone as client_phone
+      FROM policies p
+      LEFT JOIN clients c ON p.client_id = c.id
+      WHERE p.status = 'active'
+      ORDER BY p.end_date ASC
+    `);
+    return res.json(rows);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: err.message });
+  }
+};
+
 export const createRenewal = async (req, res) => {
   try {
     const { policy_id, renewal_date, status } = req.body;

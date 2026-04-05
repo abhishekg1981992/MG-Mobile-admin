@@ -2,9 +2,11 @@
 import React, { useEffect, useState } from 'react';
 import { View, FlatList, RefreshControl } from 'react-native';
 import { Searchbar, Card, Text, FAB, Button, ActivityIndicator } from 'react-native-paper';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { apiGet } from '../services/api';
 
 export default function ClientsScreen({ navigation }) {
+  const insets = useSafeAreaInsets();
   const [q, setQ] = useState('');
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -38,18 +40,21 @@ export default function ClientsScreen({ navigation }) {
     (c.email || '').toLowerCase().includes(q.toLowerCase())
   );
 
-  const renderItem = ({ item }) => (
-    <Card style={{ marginVertical: 6 }} onPress={() => navigation.navigate('ClientDetails', { id: item.id })}>
-      <Card.Content>
-        <Text variant="titleMedium">{item.name}</Text>
-        <Text variant="bodyMedium">{item.phone} • {item.email}</Text>
-      </Card.Content>
-      <Card.Actions>
-        <Button onPress={() => navigation.navigate('ClientDetails', { id: item.id })}>View</Button>
-        <Button onPress={() => navigation.navigate('AddEditClient', { client: item })}>Edit</Button>
-      </Card.Actions>
-    </Card>
-  );
+  const renderItem = ({ item }) => {
+    const details = [item.phone, item.email].filter(Boolean).join(' \u2022 ');
+    return (
+      <Card style={{ marginVertical: 6 }} onPress={() => navigation.navigate('ClientDetails', { id: item.id })}>
+        <Card.Content>
+          <Text variant="titleMedium">{item.name}</Text>
+          {details ? <Text variant="bodyMedium">{details}</Text> : null}
+        </Card.Content>
+        <Card.Actions>
+          <Button onPress={() => navigation.navigate('ClientDetails', { id: item.id })}>View</Button>
+          <Button onPress={() => navigation.navigate('AddEditClient', { client: item })}>Edit</Button>
+        </Card.Actions>
+      </Card>
+    );
+  };
 
   return (
     <View style={{ flex: 1, padding: 12 }}>
@@ -68,7 +73,7 @@ export default function ClientsScreen({ navigation }) {
       <FAB
         icon="plus"
         label="Add Client"
-        style={{ position: 'absolute', right: 16, bottom: 40 }}
+        style={{ position: 'absolute', right: 16, bottom: 16 + insets.bottom }}
         onPress={() => navigation.navigate('AddEditClient')}
       />
     </View>

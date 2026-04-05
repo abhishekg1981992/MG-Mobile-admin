@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ScrollView, Alert } from 'react-native';
+import { ScrollView, Alert, View, TouchableOpacity } from 'react-native';
 import { TextInput, Button, Text, Menu } from 'react-native-paper';
 import { apiPost, apiPut, apiGet } from '../services/api';
 
@@ -10,7 +10,8 @@ const STATUSES = ['active', 'lapsed', 'cancelled', 'matured'];
 export default function AddEditPolicy({ navigation, route }) {
   const existing = route.params?.policy || null;
   const [clients, setClients] = useState([]);
-  const [clientMenuVisible, setClientMenuVisible] = useState(false);
+  const [clientQuery, setClientQuery] = useState(existing?.client_name || '');
+  const [showClientSuggestions, setShowClientSuggestions] = useState(false);
   const [typeMenuVisible, setTypeMenuVisible] = useState(false);
   const [freqMenuVisible, setFreqMenuVisible] = useState(false);
   const [statusMenuVisible, setStatusMenuVisible] = useState(false);
@@ -27,7 +28,6 @@ export default function AddEditPolicy({ navigation, route }) {
     frequency: existing?.frequency || '',
     status: existing?.status || 'active',
   });
-  const [clientLabel, setClientLabel] = useState(existing?.client_name || '');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -39,13 +39,29 @@ export default function AddEditPolicy({ navigation, route }) {
     try {
       const res = await apiGet('/api/clients');
       setClients(Array.isArray(res) ? res : []);
-      if (existing?.client_id && !clientLabel) {
+      if (existing?.client_id && !clientQuery) {
         const c = (Array.isArray(res) ? res : []).find(c => c.id === existing.client_id);
-        if (c) setClientLabel(c.name);
+        if (c) setClientQuery(c.name);
       }
     } catch (e) {
       console.error(e);
     }
+  };
+
+  const filteredClients = clients.filter(c =>
+    clientQuery.length > 0 && (c.name || '').toLowerCase().includes(clientQuery.toLowerCase())
+  );
+
+  const handleClientSelect = (c) => {
+    setForm({ ...form, client_id: c.id });
+    setClientQuery(c.name);
+    setShowClientSuggestions(false);
+  };
+
+  const handleClientChange = (text) => {
+    setClientQuery(text);
+    setShowClientSuggestions(true);
+    if (!text) setForm({ ...form, client_id: '' });
   };
 
   const handleSave = async () => {
@@ -75,35 +91,29 @@ export default function AddEditPolicy({ navigation, route }) {
   };
 
   return (
-    <ScrollView contentContainerStyle={{ padding: 12, paddingBottom: 40 }}>
+    <ScrollView contentContainerStyle={{ padding: 12, paddingBottom: 40 }} keyboardShouldPersistTaps="handled">
       <Text variant="titleLarge">{existing ? 'Edit Policy' : 'Add Policy'}</Text>
 
-      <Menu
-        visible={clientMenuVisible}
-        onDismiss={() => setClientMenuVisible(false)}
-        anchor={
-          <TextInput
-            label="Client *"
-            value={clientLabel}
-            style={{ marginTop: 12 }}
-            editable={false}
-            right={<TextInput.Icon icon="chevron-down" onPress={() => setClientMenuVisible(true)} />}
-            onPressIn={() => setClientMenuVisible(true)}
-          />
-        }
-      >
-        {clients.map(c => (
-          <Menu.Item
-            key={String(c.id)}
-            title={c.name}
-            onPress={() => {
-              setForm({ ...form, client_id: c.id });
-              setClientLabel(c.name);
-              setClientMenuVisible(false);
-            }}
-          />
-        ))}
-      </Menu>
+      <View style={{ marginTop: 12, zIndex: 10 }}>
+        <TextInput
+          label="Client *"
+          value={clientQuery}
+          onChangeText={handleClientChange}
+          onFocus={() => setShowClientSuggestions(true)}
+          right={form.client_id ? <TextInput.Icon icon="close" onPress={() => { setClientQuery(''); setForm({ ...form, client_id: '' }); }} /> : null}
+        />
+        {showClientSuggestions && filteredClients.length > 0 && (
+          <View style={{ backgroundColor: '#fff', borderWidth: 1, borderColor: '#ddd', borderRadius: 4, maxHeight: 180 }}>
+            <ScrollView keyboardShouldPersistTaps="handled" nestedScrollEnabled>
+              {filteredClients.slice(0, 20).map(c => (
+                <TouchableOpacity key={String(c.id)} onPress={() => handleClientSelect(c)} style={{ padding: 12, borderBottomWidth: 0.5, borderColor: '#eee' }}>
+                  <Text>{c.name}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        )}
+      </View>
 
       <TextInput label="Provider *" value={form.provider} onChangeText={v => setForm({ ...form, provider: v })} style={{ marginTop: 12 }} />
       <TextInput label="Policy Number *" value={form.policy_number} onChangeText={v => setForm({ ...form, policy_number: v })} style={{ marginTop: 12 }} />

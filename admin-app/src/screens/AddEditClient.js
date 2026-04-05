@@ -1,7 +1,7 @@
 // src/screens/AddEditClient.js
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, Alert } from 'react-native';
-import { TextInput, Button, ActivityIndicator, Title } from 'react-native-paper';
+import { TextInput, Button, ActivityIndicator, Text } from 'react-native-paper';
 import { apiPost, apiPut } from '../services/api';
 
 export default function AddEditClient({ navigation, route }) {
@@ -47,7 +47,7 @@ export default function AddEditClient({ navigation, route }) {
 
   return (
     <ScrollView contentContainerStyle={{ padding: 12 }}>
-      <Title>{existing ? 'Edit Client' : 'Add Client'}</Title>
+      <Text variant="titleLarge">{existing ? 'Edit Client' : 'Add Client'}</Text>
       <TextInput label="Name" value={form.name} onChangeText={v => setForm({ ...form, name: v })} style={{marginTop:12}} />
       <TextInput label="Phone" value={form.phone} onChangeText={v => setForm({ ...form, phone: v })} keyboardType="phone-pad" style={{marginTop:12}} />
       <TextInput label="Email" value={form.email} onChangeText={v => setForm({ ...form, email: v })} keyboardType="email-address" style={{marginTop:12}} />

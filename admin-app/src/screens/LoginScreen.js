@@ -31,8 +31,8 @@ export default function LoginScreen({ navigation }) {
     >
       <ScrollView contentContainerStyle={styles.inner} keyboardShouldPersistTaps="handled">
         <Text style={styles.title}>Admin Login</Text>
-        <TextInput style={styles.input} value={username} onChangeText={setUsername} placeholder="Username" placeholderTextColor="#999" />
-        <TextInput style={styles.input} value={password} onChangeText={setPassword} placeholder="Password" secureTextEntry placeholderTextColor="#999" color="#000" />
+        <TextInput style={styles.input} value={username} onChangeText={setUsername} placeholder="Username" placeholderTextColor="#999" autoCapitalize="none" autoCorrect={false} />
+        <TextInput style={styles.input} value={password} onChangeText={setPassword} placeholder="Password" secureTextEntry placeholderTextColor="#999" color="#000" autoCapitalize="none" />
         <Button title={loading ? 'Logging in...' : 'Login'} onPress={doLogin} />
       </ScrollView>
     </KeyboardAvoidingView>

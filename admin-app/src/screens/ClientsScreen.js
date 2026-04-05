@@ -1,7 +1,7 @@
 // src/screens/ClientsScreen.js
 import React, { useEffect, useState } from 'react';
 import { View, FlatList, RefreshControl } from 'react-native';
-import { Searchbar, Card, Title, Paragraph, FAB, Button, ActivityIndicator } from 'react-native-paper';
+import { Searchbar, Card, Text, FAB, Button, ActivityIndicator } from 'react-native-paper';
 import { apiGet } from '../services/api';
 
 export default function ClientsScreen({ navigation }) {
@@ -41,8 +41,8 @@ export default function ClientsScreen({ navigation }) {
   const renderItem = ({ item }) => (
     <Card style={{ marginVertical: 6 }} onPress={() => navigation.navigate('ClientDetails', { id: item.id })}>
       <Card.Content>
-        <Title>{item.name}</Title>
-        <Paragraph>{item.phone} • {item.email}</Paragraph>
+        <Text variant="titleMedium">{item.name}</Text>
+        <Text variant="bodyMedium">{item.phone} • {item.email}</Text>
       </Card.Content>
       <Card.Actions>
         <Button onPress={() => navigation.navigate('ClientDetails', { id: item.id })}>View</Button>
@@ -68,7 +68,7 @@ export default function ClientsScreen({ navigation }) {
       <FAB
         icon="plus"
         label="Add Client"
-        style={{ position: 'absolute', right: 16, bottom: 20 }}
+        style={{ position: 'absolute', right: 16, bottom: 40 }}
         onPress={() => navigation.navigate('AddEditClient')}
       />
     </View>

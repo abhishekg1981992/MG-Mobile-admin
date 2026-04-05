@@ -1,7 +1,7 @@
 // src/screens/ClientDetails.js
 import React, { useEffect, useState } from 'react';
 import { ScrollView, View, Alert } from 'react-native';
-import { Title, Paragraph, Card, Button, List, ActivityIndicator } from 'react-native-paper';
+import { Text, Card, Button, List, ActivityIndicator } from 'react-native-paper';
 import { apiGet, uploadClientDocument } from '../services/api';
 
 export default function ClientDetails({ route, navigation }) {
@@ -51,15 +51,15 @@ export default function ClientDetails({ route, navigation }) {
 
   if (loading) return <ActivityIndicator style={{flex:1}} />;
 
-  if (!client) return <Paragraph>No client found</Paragraph>;
+  if (!client) return <Text variant="bodyMedium">No client found</Text>;
 
   return (
     <ScrollView style={{ padding: 12 }}>
       <Card style={{ marginBottom: 12 }}>
         <Card.Content>
-          <Title>{client.name}</Title>
-          <Paragraph>{client.phone} • {client.email}</Paragraph>
-          <Paragraph style={{ marginTop: 8 }}>{client.address}</Paragraph>
+          <Text variant="titleLarge">{client.name}</Text>
+          <Text variant="bodyMedium">{client.phone} • {client.email}</Text>
+          <Text variant="bodyMedium" style={{ marginTop: 8 }}>{client.address}</Text>
         </Card.Content>
         <Card.Actions>
           <Button onPress={() => navigation.navigate('AddEditClient', { client })}>Edit</Button>
@@ -67,15 +67,15 @@ export default function ClientDetails({ route, navigation }) {
         </Card.Actions>
       </Card>
 
-      <Title>Policies</Title>
+      <Text variant="titleLarge">Policies</Text>
       {client.policies?.length ? client.policies.map(p => (
         <List.Item key={String(p.id)} title={`${p.policy_number} — ${p.provider}`} description={`${p.policy_type} • ₹${p.premium_amount}`} />
-      )) : <Paragraph>No policies</Paragraph>}
+      )) : <Text variant="bodyMedium">No policies</Text>}
 
-      <Title style={{ marginTop: 12 }}>Documents</Title>
+      <Text variant="titleLarge" style={{ marginTop: 12 }}>Documents</Text>
       {client.documents?.length ? client.documents.map(doc => (
         <List.Item key={String(doc.id)} title={doc.filename} description={doc.path} left={props => <List.Icon {...props} icon="file" />} />
-      )) : <Paragraph>No documents</Paragraph>}
+      )) : <Text variant="bodyMedium">No documents</Text>}
     </ScrollView>
   );
 }

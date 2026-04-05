@@ -41,11 +41,18 @@ jobs:
       - name: Build Android APK
         id: eas_build
         run: |
-          BUILD_JSON=$(eas build --platform android --profile preview --non-interactive --json 2>/dev/null | tail -1)
-          APK_URL=$(echo "$BUILD_JSON" | jq -r '.[0].artifacts.buildUrl // empty')
+          set -euo pipefail
+          echo "Starting EAS build..."
+          eas build --platform android --profile preview --non-interactive --json | tee /tmp/eas-output.json
+          APK_URL=$(jq -r '.[0].artifacts.buildUrl // empty' /tmp/eas-output.json)
           if [ -z "$APK_URL" ]; then
-            echo "Could not extract APK URL from EAS output, fetching latest build..."
-            APK_URL=$(eas build:list --platform android --status finished --limit 1 --json 2>/dev/null | jq -r '.[0].artifacts.buildUrl')
+            echo "Could not extract APK URL from build output, fetching latest build..."
+            eas build:list --platform android --status finished --limit 1 --json | tee /tmp/eas-list.json
+            APK_URL=$(jq -r '.[0].artifacts.buildUrl' /tmp/eas-list.json)
+          fi
+          if [ -z "$APK_URL" ] || [ "$APK_URL" = "null" ]; then
+            echo "::error::Failed to get APK URL"
+            exit 1
           fi
           echo "apk_url=$APK_URL" >> "$GITHUB_OUTPUT"
           echo "APK URL: $APK_URL"

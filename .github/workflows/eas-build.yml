@@ -8,6 +8,9 @@ on:
       - 'admin-app/**'
       - '.github/workflows/**'
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Build Android APK
@@ -70,144 +73,34 @@ jobs:
           path: admin-app/admin-app.apk
           if-no-files-found: error
 
-      - name: Upload APK to Google Drive
-        id: gdrive_upload
-        continue-on-error: true
-        env:
-          GDRIVE_CREDENTIALS: ${{ secrets.GDRIVE_CREDENTIALS }}
-          GDRIVE_FOLDER_ID: ${{ secrets.GDRIVE_FOLDER_ID }}
+      - name: Generate release tag
+        id: tag
         run: |
-          echo "$GDRIVE_CREDENTIALS" > /tmp/gdrive-creds.json
+          TAG="build-$(date +'%Y%m%d-%H%M%S')-${{ github.run_number }}"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "Release tag: $TAG"
 
-          # Install googleapis
-          npm init -y > /dev/null 2>&1
-          npm install googleapis > /dev/null 2>&1
-
-          node << 'SCRIPT'
-          const { google } = require('googleapis');
-          const fs = require('fs');
-
-          function setOutput(name, value) {
-            if (!process.env.GITHUB_OUTPUT) {
-              return;
-            }
-            fs.appendFileSync(process.env.GITHUB_OUTPUT, `${name}=${String(value)}\n`);
-          }
-
-          async function upload() {
-            const creds = JSON.parse(fs.readFileSync('/tmp/gdrive-creds.json', 'utf8'));
-            console.log(`Service account email: ${creds.client_email}`);
-            console.log('(Grant this account access to the destination folder or shared drive)\n');
-
-            const auth = new google.auth.GoogleAuth({
-              keyFile: '/tmp/gdrive-creds.json',
-              scopes: ['https://www.googleapis.com/auth/drive'],
-            });
-
-            const drive = google.drive({ version: 'v3', auth });
-            const folderId = process.env.GDRIVE_FOLDER_ID;
-
-            const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
-            const fileName = `admin-app-${timestamp}.apk`;
-
-            let folder;
-            try {
-              const folderRes = await drive.files.get({
-                fileId: folderId,
-                fields: 'id,name,mimeType,driveId',
-                supportsAllDrives: true,
-              });
-              folder = folderRes.data;
-              setOutput('folder_name', folder.name || '');
-              setOutput('folder_id', folder.id || '');
-              setOutput('folder_drive_id', folder.driveId || '');
-              setOutput('folder_in_shared_drive', folder.driveId ? 'yes' : 'no');
-              console.log(`Target folder: ${folder.name} (${folder.id})`);
-            } catch (err) {
-              setOutput('folder_name', '');
-              setOutput('folder_id', folderId || '');
-              setOutput('folder_drive_id', '');
-              setOutput('folder_in_shared_drive', 'unknown');
-              console.error(`Folder lookup failed (${err.code}): ${err.message}`);
-              console.error(`The service account cannot access GDRIVE_FOLDER_ID=${folderId}.`);
-              console.error(`Fix: share the folder or its shared drive with "${creds.client_email}".`);
-              process.exit(1);
-            }
-
-            if (!folder.driveId) {
-              console.error('The destination folder is in My Drive, not a Shared Drive.');
-              console.error('Google service accounts cannot upload files there because they do not have personal Drive storage quota.');
-              console.error('Fix: create or use a Shared Drive folder, add the service account to that Shared Drive, and set GDRIVE_FOLDER_ID to that folder ID.');
-              process.exit(1);
-            }
-
-            try {
-              const res = await drive.files.create({
-                requestBody: {
-                  name: fileName,
-                  parents: [folderId],
-                },
-                media: {
-                  mimeType: 'application/vnd.android.package-archive',
-                  body: fs.createReadStream('admin-app.apk'),
-                },
-                fields: 'id, name, webViewLink',
-                supportsAllDrives: true,
-              });
-
-              console.log(`Uploaded: ${res.data.name}`);
-              console.log(`File ID: ${res.data.id}`);
-              console.log(`Link: ${res.data.webViewLink}`);
-            } catch (err) {
-              console.error(`Folder upload failed (${err.code}): ${err.message}`);
-              if (err.code === 403 && String(err.message).includes('storage quota')) {
-                console.error('The folder is reachable, but uploads are still being blocked by Drive quota rules.');
-                console.error('This usually means the folder is not actually inside a Shared Drive, or the service account is not a member of that Shared Drive.');
-                console.error(`Fix: add "${creds.client_email}" directly to the Shared Drive and use a folder ID from inside that Shared Drive.`);
-              }
-              process.exit(1);
-            }
-          }
-
-          upload().catch(err => { console.error(err); process.exit(1); });
-          SCRIPT
-
-          rm -f /tmp/gdrive-creds.json
+      - name: Create GitHub Release
+        id: release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          name: "Android APK — ${{ steps.tag.outputs.tag }}"
+          body: |
+            Automated build from commit ${{ github.sha }}
+            Branch: ${{ github.ref_name }}
+            EAS build URL: ${{ steps.eas_build.outputs.apk_url }}
+          files: admin-app/admin-app.apk
+          fail_on_unmatched_files: true
 
       - name: Final build summary
         if: always()
         run: |
-          echo "APK artifact: admin-app-apk"
-          echo "APK URL: ${{ steps.eas_build.outputs.apk_url }}"
-          echo "Drive folder name: ${{ steps.gdrive_upload.outputs.folder_name || 'unknown' }}"
-          echo "Drive folder ID: ${{ steps.gdrive_upload.outputs.folder_id || 'unknown' }}"
-          echo "Folder in Shared Drive: ${{ steps.gdrive_upload.outputs.folder_in_shared_drive || 'unknown' }}"
-          if [ -n "${{ steps.gdrive_upload.outputs.folder_drive_id }}" ]; then
-            echo "Shared Drive ID: ${{ steps.gdrive_upload.outputs.folder_drive_id }}"
-          fi
-
-          if [ "${{ steps.gdrive_upload.outcome }}" = "success" ]; then
-            echo "Google Drive upload: success"
-            echo "## Build Summary" >> "$GITHUB_STEP_SUMMARY"
-            echo "- APK artifact: admin-app-apk" >> "$GITHUB_STEP_SUMMARY"
-            echo "- APK URL: ${{ steps.eas_build.outputs.apk_url }}" >> "$GITHUB_STEP_SUMMARY"
-            echo "- Drive folder name: ${{ steps.gdrive_upload.outputs.folder_name || 'unknown' }}" >> "$GITHUB_STEP_SUMMARY"
-            echo "- Drive folder ID: ${{ steps.gdrive_upload.outputs.folder_id || 'unknown' }}" >> "$GITHUB_STEP_SUMMARY"
-            echo "- Folder in Shared Drive: ${{ steps.gdrive_upload.outputs.folder_in_shared_drive || 'unknown' }}" >> "$GITHUB_STEP_SUMMARY"
-            if [ -n "${{ steps.gdrive_upload.outputs.folder_drive_id }}" ]; then
-              echo "- Shared Drive ID: ${{ steps.gdrive_upload.outputs.folder_drive_id }}" >> "$GITHUB_STEP_SUMMARY"
-            fi
-            echo "- Google Drive upload: success" >> "$GITHUB_STEP_SUMMARY"
+          echo "## Build Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **APK artifact:** admin-app-apk" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **EAS build URL:** ${{ steps.eas_build.outputs.apk_url }}" >> "$GITHUB_STEP_SUMMARY"
+          if [ "${{ steps.release.outcome }}" = "success" ]; then
+            echo "- **GitHub Release:** ${{ steps.release.outputs.url }}" >> "$GITHUB_STEP_SUMMARY"
           else
-            echo "::warning::Google Drive upload failed. APK is still available in artifact 'admin-app-apk'."
-            echo "## Build Summary" >> "$GITHUB_STEP_SUMMARY"
-            echo "- APK artifact: admin-app-apk" >> "$GITHUB_STEP_SUMMARY"
-            echo "- APK URL: ${{ steps.eas_build.outputs.apk_url }}" >> "$GITHUB_STEP_SUMMARY"
-            echo "- Drive folder name: ${{ steps.gdrive_upload.outputs.folder_name || 'unknown' }}" >> "$GITHUB_STEP_SUMMARY"
-            echo "- Drive folder ID: ${{ steps.gdrive_upload.outputs.folder_id || 'unknown' }}" >> "$GITHUB_STEP_SUMMARY"
-            echo "- Folder in Shared Drive: ${{ steps.gdrive_upload.outputs.folder_in_shared_drive || 'unknown' }}" >> "$GITHUB_STEP_SUMMARY"
-            if [ -n "${{ steps.gdrive_upload.outputs.folder_drive_id }}" ]; then
-              echo "- Shared Drive ID: ${{ steps.gdrive_upload.outputs.folder_drive_id }}" >> "$GITHUB_STEP_SUMMARY"
-            fi
-            echo "- Google Drive upload: failed (service account uploads require a Shared Drive folder, not My Drive)" >> "$GITHUB_STEP_SUMMARY"
+            echo "- **GitHub Release:** failed" >> "$GITHUB_STEP_SUMMARY"
           fi

@@ -88,6 +88,10 @@ jobs:
           const fs = require('fs');
 
           async function upload() {
+            const creds = JSON.parse(fs.readFileSync('/tmp/gdrive-creds.json', 'utf8'));
+            console.log(`Service account email: ${creds.client_email}`);
+            console.log('(Share your Google Drive folder with this email as Editor)\n');
+
             const auth = new google.auth.GoogleAuth({
               keyFile: '/tmp/gdrive-creds.json',
               scopes: ['https://www.googleapis.com/auth/drive'],
@@ -96,33 +100,50 @@ jobs:
             const drive = google.drive({ version: 'v3', auth });
             const folderId = process.env.GDRIVE_FOLDER_ID;
 
-            // Preflight check for clearer diagnostics when folder ID is wrong
-            // or the service account has not been shared on that folder.
-            await drive.files.get({
-              fileId: folderId,
-              fields: 'id,name',
-              supportsAllDrives: true,
-            });
-
             const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
             const fileName = `admin-app-${timestamp}.apk`;
 
+            // Try uploading to the specified folder
+            try {
+              const res = await drive.files.create({
+                requestBody: {
+                  name: fileName,
+                  parents: [folderId],
+                },
+                media: {
+                  mimeType: 'application/vnd.android.package-archive',
+                  body: fs.createReadStream('admin-app.apk'),
+                },
+                fields: 'id, name, webViewLink',
+                supportsAllDrives: true,
+              });
+
+              console.log(`Uploaded: ${res.data.name}`);
+              console.log(`File ID: ${res.data.id}`);
+              console.log(`Link: ${res.data.webViewLink}`);
+              return;
+            } catch (err) {
+              console.error(`Folder upload failed (${err.code}): ${err.message}`);
+              console.error(`\nThe folder (GDRIVE_FOLDER_ID) has NOT been shared with the service account.`);
+              console.error(`Fix: Open Google Drive -> Right-click the folder -> Share -> Add "${creds.client_email}" as Editor.\n`);
+            }
+
+            // Fallback: upload to service account's own Drive root
+            console.log('Fallback: uploading to service account root Drive...');
             const res = await drive.files.create({
               requestBody: {
                 name: fileName,
-                parents: [folderId],
               },
               media: {
                 mimeType: 'application/vnd.android.package-archive',
                 body: fs.createReadStream('admin-app.apk'),
               },
               fields: 'id, name, webViewLink',
-              supportsAllDrives: true,
             });
 
-            console.log(`Uploaded: ${res.data.name}`);
+            console.log(`Uploaded to root: ${res.data.name}`);
             console.log(`File ID: ${res.data.id}`);
-            console.log(`Link: ${res.data.webViewLink}`);
+            console.log(`Link: ${res.data.webViewLink || 'N/A (share the file from service account Drive)'}`);
           }
 
           upload().catch(err => { console.error(err); process.exit(1); });

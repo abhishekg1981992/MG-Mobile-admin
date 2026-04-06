@@ -90,7 +90,7 @@ jobs:
           async function upload() {
             const creds = JSON.parse(fs.readFileSync('/tmp/gdrive-creds.json', 'utf8'));
             console.log(`Service account email: ${creds.client_email}`);
-            console.log('(Share your Google Drive folder with this email as Editor)\n');
+            console.log('(Grant this account access to the destination folder or shared drive)\n');
 
             const auth = new google.auth.GoogleAuth({
               keyFile: '/tmp/gdrive-creds.json',
@@ -103,7 +103,29 @@ jobs:
             const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
             const fileName = `admin-app-${timestamp}.apk`;
 
-            // Try uploading to the specified folder
+            let folder;
+            try {
+              const folderRes = await drive.files.get({
+                fileId: folderId,
+                fields: 'id,name,mimeType,driveId',
+                supportsAllDrives: true,
+              });
+              folder = folderRes.data;
+              console.log(`Target folder: ${folder.name} (${folder.id})`);
+            } catch (err) {
+              console.error(`Folder lookup failed (${err.code}): ${err.message}`);
+              console.error(`The service account cannot access GDRIVE_FOLDER_ID=${folderId}.`);
+              console.error(`Fix: share the folder or its shared drive with "${creds.client_email}".`);
+              process.exit(1);
+            }
+
+            if (!folder.driveId) {
+              console.error('The destination folder is in My Drive, not a Shared Drive.');
+              console.error('Google service accounts cannot upload files there because they do not have personal Drive storage quota.');
+              console.error('Fix: create or use a Shared Drive folder, add the service account to that Shared Drive, and set GDRIVE_FOLDER_ID to that folder ID.');
+              process.exit(1);
+            }
+
             try {
               const res = await drive.files.create({
                 requestBody: {
@@ -121,29 +143,15 @@ jobs:
               console.log(`Uploaded: ${res.data.name}`);
               console.log(`File ID: ${res.data.id}`);
               console.log(`Link: ${res.data.webViewLink}`);
-              return;
             } catch (err) {
               console.error(`Folder upload failed (${err.code}): ${err.message}`);
-              console.error(`\nThe folder (GDRIVE_FOLDER_ID) has NOT been shared with the service account.`);
-              console.error(`Fix: Open Google Drive -> Right-click the folder -> Share -> Add "${creds.client_email}" as Editor.\n`);
+              if (err.code === 403 && String(err.message).includes('storage quota')) {
+                console.error('The folder is reachable, but uploads are still being blocked by Drive quota rules.');
+                console.error('This usually means the folder is not actually inside a Shared Drive, or the service account is not a member of that Shared Drive.');
+                console.error(`Fix: add "${creds.client_email}" directly to the Shared Drive and use a folder ID from inside that Shared Drive.`);
+              }
+              process.exit(1);
             }
-
-            // Fallback: upload to service account's own Drive root
-            console.log('Fallback: uploading to service account root Drive...');
-            const res = await drive.files.create({
-              requestBody: {
-                name: fileName,
-              },
-              media: {
-                mimeType: 'application/vnd.android.package-archive',
-                body: fs.createReadStream('admin-app.apk'),
-              },
-              fields: 'id, name, webViewLink',
-            });
-
-            console.log(`Uploaded to root: ${res.data.name}`);
-            console.log(`File ID: ${res.data.id}`);
-            console.log(`Link: ${res.data.webViewLink || 'N/A (share the file from service account Drive)'}`);
           }
 
           upload().catch(err => { console.error(err); process.exit(1); });
@@ -168,5 +176,5 @@ jobs:
             echo "## Build Summary" >> "$GITHUB_STEP_SUMMARY"
             echo "- APK artifact: admin-app-apk" >> "$GITHUB_STEP_SUMMARY"
             echo "- APK URL: ${{ steps.eas_build.outputs.apk_url }}" >> "$GITHUB_STEP_SUMMARY"
-            echo "- Google Drive upload: failed (check folder sharing and GDRIVE_FOLDER_ID secret)" >> "$GITHUB_STEP_SUMMARY"
+            echo "- Google Drive upload: failed (service account uploads require a Shared Drive folder, not My Drive)" >> "$GITHUB_STEP_SUMMARY"
           fi

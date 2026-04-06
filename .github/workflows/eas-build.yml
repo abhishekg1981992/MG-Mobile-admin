@@ -63,7 +63,16 @@ jobs:
           curl -L -o admin-app.apk "${{ steps.eas_build.outputs.apk_url }}"
           ls -lh admin-app.apk
 
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: admin-app-apk
+          path: admin-app/admin-app.apk
+          if-no-files-found: error
+
       - name: Upload APK to Google Drive
+        id: gdrive_upload
+        continue-on-error: true
         env:
           GDRIVE_CREDENTIALS: ${{ secrets.GDRIVE_CREDENTIALS }}
           GDRIVE_FOLDER_ID: ${{ secrets.GDRIVE_FOLDER_ID }}
@@ -77,7 +86,6 @@ jobs:
           node << 'SCRIPT'
           const { google } = require('googleapis');
           const fs = require('fs');
-          const path = require('path');
 
           async function upload() {
             const auth = new google.auth.GoogleAuth({
@@ -87,6 +95,15 @@ jobs:
 
             const drive = google.drive({ version: 'v3', auth });
             const folderId = process.env.GDRIVE_FOLDER_ID;
+
+            // Preflight check for clearer diagnostics when folder ID is wrong
+            // or the service account has not been shared on that folder.
+            await drive.files.get({
+              fileId: folderId,
+              fields: 'id,name',
+              supportsAllDrives: true,
+            });
+
             const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
             const fileName = `admin-app-${timestamp}.apk`;
 
@@ -100,6 +117,7 @@ jobs:
                 body: fs.createReadStream('admin-app.apk'),
               },
               fields: 'id, name, webViewLink',
+              supportsAllDrives: true,
             });
 
             console.log(`Uploaded: ${res.data.name}`);
@@ -111,3 +129,23 @@ jobs:
           SCRIPT
 
           rm -f /tmp/gdrive-creds.json
+
+      - name: Final build summary
+        if: always()
+        run: |
+          echo "APK artifact: admin-app-apk"
+          echo "APK URL: ${{ steps.eas_build.outputs.apk_url }}"
+
+          if [ "${{ steps.gdrive_upload.outcome }}" = "success" ]; then
+            echo "Google Drive upload: success"
+            echo "## Build Summary" >> "$GITHUB_STEP_SUMMARY"
+            echo "- APK artifact: admin-app-apk" >> "$GITHUB_STEP_SUMMARY"
+            echo "- APK URL: ${{ steps.eas_build.outputs.apk_url }}" >> "$GITHUB_STEP_SUMMARY"
+            echo "- Google Drive upload: success" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "::warning::Google Drive upload failed. APK is still available in artifact 'admin-app-apk'."
+            echo "## Build Summary" >> "$GITHUB_STEP_SUMMARY"
+            echo "- APK artifact: admin-app-apk" >> "$GITHUB_STEP_SUMMARY"
+            echo "- APK URL: ${{ steps.eas_build.outputs.apk_url }}" >> "$GITHUB_STEP_SUMMARY"
+            echo "- Google Drive upload: failed (check folder sharing and GDRIVE_FOLDER_ID secret)" >> "$GITHUB_STEP_SUMMARY"
+          fi

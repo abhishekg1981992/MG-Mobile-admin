@@ -87,6 +87,13 @@ jobs:
           const { google } = require('googleapis');
           const fs = require('fs');
 
+          function setOutput(name, value) {
+            if (!process.env.GITHUB_OUTPUT) {
+              return;
+            }
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, `${name}=${String(value)}\n`);
+          }
+
           async function upload() {
             const creds = JSON.parse(fs.readFileSync('/tmp/gdrive-creds.json', 'utf8'));
             console.log(`Service account email: ${creds.client_email}`);
@@ -111,8 +118,16 @@ jobs:
                 supportsAllDrives: true,
               });
               folder = folderRes.data;
+              setOutput('folder_name', folder.name || '');
+              setOutput('folder_id', folder.id || '');
+              setOutput('folder_drive_id', folder.driveId || '');
+              setOutput('folder_in_shared_drive', folder.driveId ? 'yes' : 'no');
               console.log(`Target folder: ${folder.name} (${folder.id})`);
             } catch (err) {
+              setOutput('folder_name', '');
+              setOutput('folder_id', folderId || '');
+              setOutput('folder_drive_id', '');
+              setOutput('folder_in_shared_drive', 'unknown');
               console.error(`Folder lookup failed (${err.code}): ${err.message}`);
               console.error(`The service account cannot access GDRIVE_FOLDER_ID=${folderId}.`);
               console.error(`Fix: share the folder or its shared drive with "${creds.client_email}".`);
@@ -164,17 +179,35 @@ jobs:
         run: |
           echo "APK artifact: admin-app-apk"
           echo "APK URL: ${{ steps.eas_build.outputs.apk_url }}"
+          echo "Drive folder name: ${{ steps.gdrive_upload.outputs.folder_name || 'unknown' }}"
+          echo "Drive folder ID: ${{ steps.gdrive_upload.outputs.folder_id || 'unknown' }}"
+          echo "Folder in Shared Drive: ${{ steps.gdrive_upload.outputs.folder_in_shared_drive || 'unknown' }}"
+          if [ -n "${{ steps.gdrive_upload.outputs.folder_drive_id }}" ]; then
+            echo "Shared Drive ID: ${{ steps.gdrive_upload.outputs.folder_drive_id }}"
+          fi
 
           if [ "${{ steps.gdrive_upload.outcome }}" = "success" ]; then
             echo "Google Drive upload: success"
             echo "## Build Summary" >> "$GITHUB_STEP_SUMMARY"
             echo "- APK artifact: admin-app-apk" >> "$GITHUB_STEP_SUMMARY"
             echo "- APK URL: ${{ steps.eas_build.outputs.apk_url }}" >> "$GITHUB_STEP_SUMMARY"
+            echo "- Drive folder name: ${{ steps.gdrive_upload.outputs.folder_name || 'unknown' }}" >> "$GITHUB_STEP_SUMMARY"
+            echo "- Drive folder ID: ${{ steps.gdrive_upload.outputs.folder_id || 'unknown' }}" >> "$GITHUB_STEP_SUMMARY"
+            echo "- Folder in Shared Drive: ${{ steps.gdrive_upload.outputs.folder_in_shared_drive || 'unknown' }}" >> "$GITHUB_STEP_SUMMARY"
+            if [ -n "${{ steps.gdrive_upload.outputs.folder_drive_id }}" ]; then
+              echo "- Shared Drive ID: ${{ steps.gdrive_upload.outputs.folder_drive_id }}" >> "$GITHUB_STEP_SUMMARY"
+            fi
             echo "- Google Drive upload: success" >> "$GITHUB_STEP_SUMMARY"
           else
             echo "::warning::Google Drive upload failed. APK is still available in artifact 'admin-app-apk'."
             echo "## Build Summary" >> "$GITHUB_STEP_SUMMARY"
             echo "- APK artifact: admin-app-apk" >> "$GITHUB_STEP_SUMMARY"
             echo "- APK URL: ${{ steps.eas_build.outputs.apk_url }}" >> "$GITHUB_STEP_SUMMARY"
+            echo "- Drive folder name: ${{ steps.gdrive_upload.outputs.folder_name || 'unknown' }}" >> "$GITHUB_STEP_SUMMARY"
+            echo "- Drive folder ID: ${{ steps.gdrive_upload.outputs.folder_id || 'unknown' }}" >> "$GITHUB_STEP_SUMMARY"
+            echo "- Folder in Shared Drive: ${{ steps.gdrive_upload.outputs.folder_in_shared_drive || 'unknown' }}" >> "$GITHUB_STEP_SUMMARY"
+            if [ -n "${{ steps.gdrive_upload.outputs.folder_drive_id }}" ]; then
+              echo "- Shared Drive ID: ${{ steps.gdrive_upload.outputs.folder_drive_id }}" >> "$GITHUB_STEP_SUMMARY"
+            fi
             echo "- Google Drive upload: failed (service account uploads require a Shared Drive folder, not My Drive)" >> "$GITHUB_STEP_SUMMARY"
           fi

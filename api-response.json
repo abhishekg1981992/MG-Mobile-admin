@@ -1,842 +1,199 @@
-2026-04-06T05:59:13.6914611Z Current runner version: '2.333.1'
-2026-04-06T05:59:13.6940453Z ##[group]Runner Image Provisioner
-2026-04-06T05:59:13.6941597Z Hosted Compute Agent
-2026-04-06T05:59:13.6942326Z Version: 20260213.493
-2026-04-06T05:59:13.6943198Z Commit: 5c115507f6dd24b8de37d8bbe0bb4509d0cc0fa3
-2026-04-06T05:59:13.6944161Z Build Date: 2026-02-13T00:28:41Z
-2026-04-06T05:59:13.6945150Z Worker ID: ***ee06f51f-cfda-4cf6-b255-34db6a720614***
-2026-04-06T05:59:13.6946128Z Azure Region: northcentralus
-2026-04-06T05:59:13.6946946Z ##[endgroup]
-2026-04-06T05:59:13.6949489Z ##[group]Operating System
-2026-04-06T05:59:13.6950484Z Ubuntu
-2026-04-06T05:59:13.6951272Z 24.04.4
-2026-04-06T05:59:13.6952041Z LTS
-2026-04-06T05:59:13.6952853Z ##[endgroup]
-2026-04-06T05:59:13.6953837Z ##[group]Runner Image
-2026-04-06T05:59:13.6954668Z Image: ubuntu-24.04
-2026-04-06T05:59:13.6955389Z Version: 20260329.72.1
-2026-04-06T05:59:13.6956909Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260329.72/images/ubuntu/Ubuntu2404-Readme.md
-2026-04-06T05:59:13.6958695Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260329.72
-2026-04-06T05:59:13.6960004Z ##[endgroup]
-2026-04-06T05:59:13.6961570Z ##[group]GITHUB_TOKEN Permissions
-2026-04-06T05:59:13.6963941Z Contents: read
-2026-04-06T05:59:13.6964675Z Metadata: read
-2026-04-06T05:59:13.6965413Z Packages: read
-2026-04-06T05:59:13.6966140Z ##[endgroup]
-2026-04-06T05:59:13.6968405Z Secret source: Actions
-2026-04-06T05:59:13.6969740Z Prepare workflow directory
-2026-04-06T05:59:13.7378091Z Prepare all required actions
-2026-04-06T05:59:13.7416341Z Getting action download info
-2026-04-06T05:59:14.1373187Z Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
-2026-04-06T05:59:14.2992342Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
-2026-04-06T05:59:14.3930912Z Download action repository 'expo/expo-github-action@v8' (SHA:c7b66a9c327a43a8fa7c0158e7f30d6040d2481e)
-2026-04-06T05:59:15.0847623Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
-2026-04-06T05:59:15.3211996Z Complete job name: Build Android APK
-2026-04-06T05:59:15.4150170Z ##[group]Run actions/checkout@v4
-2026-04-06T05:59:15.4151875Z with:
-2026-04-06T05:59:15.4153063Z   repository: abhishekg1981992/MG-Mobile-admin
-2026-04-06T05:59:15.4154808Z   token: ***
-2026-04-06T05:59:15.4155878Z   ssh-strict: true
-2026-04-06T05:59:15.4225984Z   ssh-user: git
-2026-04-06T05:59:15.4227393Z   persist-credentials: true
-2026-04-06T05:59:15.4228991Z   clean: true
-2026-04-06T05:59:15.4230388Z   sparse-checkout-cone-mode: true
-2026-04-06T05:59:15.4231719Z   fetch-depth: 1
-2026-04-06T05:59:15.4232836Z   fetch-tags: false
-2026-04-06T05:59:15.4233964Z   show-progress: true
-2026-04-06T05:59:15.4238066Z   lfs: false
-2026-04-06T05:59:15.4239458Z   submodules: false
-2026-04-06T05:59:15.4240617Z   set-safe-directory: true
-2026-04-06T05:59:15.4243909Z ##[endgroup]
-2026-04-06T05:59:15.5364345Z Syncing repository: abhishekg1981992/MG-Mobile-admin
-2026-04-06T05:59:15.5367856Z ##[group]Getting Git version info
-2026-04-06T05:59:15.5370095Z Working directory is '/home/runner/work/MG-Mobile-admin/MG-Mobile-admin'
-2026-04-06T05:59:15.5372653Z [command]/usr/bin/git version
-2026-04-06T05:59:15.5399060Z git version 2.53.0
-2026-04-06T05:59:15.5426502Z ##[endgroup]
-2026-04-06T05:59:15.5441706Z Temporarily overriding HOME='/home/runner/work/_temp/69d4a927-0768-4c13-ad67-8146d89808de' before making global git config changes
-2026-04-06T05:59:15.5445719Z Adding repository directory to the temporary git global config as a safe directory
-2026-04-06T05:59:15.5455145Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/MG-Mobile-admin/MG-Mobile-admin
-2026-04-06T05:59:15.5487569Z Deleting the contents of '/home/runner/work/MG-Mobile-admin/MG-Mobile-admin'
-2026-04-06T05:59:15.5491332Z ##[group]Initializing the repository
-2026-04-06T05:59:15.5495419Z [command]/usr/bin/git init /home/runner/work/MG-Mobile-admin/MG-Mobile-admin
-2026-04-06T05:59:15.5587860Z hint: Using 'master' as the name for the initial branch. This default branch name
-2026-04-06T05:59:15.5591572Z hint: will change to "main" in Git 3.0. To configure the initial branch name
-2026-04-06T05:59:15.5594408Z hint: to use in all of your new repositories, which will suppress this warning,
-2026-04-06T05:59:15.5596193Z hint: call:
-2026-04-06T05:59:15.5597221Z hint:
-2026-04-06T05:59:15.5598500Z hint: 	git config --global init.defaultBranch <name>
-2026-04-06T05:59:15.5600453Z hint:
-2026-04-06T05:59:15.5602232Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
-2026-04-06T05:59:15.5604418Z hint: 'development'. The just-created branch can be renamed via this command:
-2026-04-06T05:59:15.5606172Z hint:
-2026-04-06T05:59:15.5607313Z hint: 	git branch -m <name>
-2026-04-06T05:59:15.5608616Z hint:
-2026-04-06T05:59:15.5610410Z hint: Disable this message with "git config set advice.defaultBranchName false"
-2026-04-06T05:59:15.5612885Z Initialized empty Git repository in /home/runner/work/MG-Mobile-admin/MG-Mobile-admin/.git/
-2026-04-06T05:59:15.5617017Z [command]/usr/bin/git remote add origin https://github.com/abhishekg1981992/MG-Mobile-admin
-2026-04-06T05:59:15.5638611Z ##[endgroup]
-2026-04-06T05:59:15.5642211Z ##[group]Disabling automatic garbage collection
-2026-04-06T05:59:15.5644981Z [command]/usr/bin/git config --local gc.auto 0
-2026-04-06T05:59:15.5674023Z ##[endgroup]
-2026-04-06T05:59:15.5677127Z ##[group]Setting up auth
-2026-04-06T05:59:15.5680910Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
-2026-04-06T05:59:15.5714651Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
-2026-04-06T05:59:15.6012737Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
-2026-04-06T05:59:15.6042355Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
-2026-04-06T05:59:15.6259280Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
-2026-04-06T05:59:15.6298188Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
-2026-04-06T05:59:15.6523425Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
-2026-04-06T05:59:15.6558533Z ##[endgroup]
-2026-04-06T05:59:15.6562078Z ##[group]Fetching the repository
-2026-04-06T05:59:15.6571088Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +e397e0055f9defbba39566db91a5c7ced589ef32:refs/remotes/origin/main
-2026-04-06T05:59:16.0627641Z From https://github.com/abhishekg1981992/MG-Mobile-admin
-2026-04-06T05:59:16.0632676Z  * [new ref]         e397e0055f9defbba39566db91a5c7ced589ef32 -> origin/main
-2026-04-06T05:59:16.0666469Z ##[endgroup]
-2026-04-06T05:59:16.0675463Z ##[group]Determining the checkout info
-2026-04-06T05:59:16.0678318Z ##[endgroup]
-2026-04-06T05:59:16.0679840Z [command]/usr/bin/git sparse-checkout disable
-2026-04-06T05:59:16.0716809Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
-2026-04-06T05:59:16.0746711Z ##[group]Checking out the ref
-2026-04-06T05:59:16.0751224Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
-2026-04-06T05:59:16.0904000Z Switched to a new branch 'main'
-2026-04-06T05:59:16.0908258Z branch 'main' set up to track 'origin/main'.
-2026-04-06T05:59:16.0923287Z ##[endgroup]
-2026-04-06T05:59:16.0958487Z [command]/usr/bin/git log -1 --format=%H
-2026-04-06T05:59:16.0982085Z e397e0055f9defbba39566db91a5c7ced589ef32
-2026-04-06T05:59:16.1305854Z ##[group]Run actions/setup-node@v4
-2026-04-06T05:59:16.1307156Z with:
-2026-04-06T05:59:16.1308169Z   node-version: 20
-2026-04-06T05:59:16.1309746Z   cache: npm
-2026-04-06T05:59:16.1311013Z   cache-dependency-path: admin-app/package-lock.json
-2026-04-06T05:59:16.1312498Z   always-auth: false
-2026-04-06T05:59:16.1313634Z   check-latest: false
-2026-04-06T05:59:16.1315026Z   token: ***
-2026-04-06T05:59:16.1316078Z ##[endgroup]
-2026-04-06T05:59:16.3097968Z Found in cache @ /opt/hostedtoolcache/node/20.20.2/x64
-2026-04-06T05:59:16.3104000Z ##[group]Environment details
-2026-04-06T05:59:19.5240647Z node: v20.20.2
-2026-04-06T05:59:19.5241302Z npm: 10.8.2
-2026-04-06T05:59:19.5241775Z yarn: 1.22.22
-2026-04-06T05:59:19.5243591Z ##[endgroup]
-2026-04-06T05:59:19.5265151Z [command]/opt/hostedtoolcache/node/20.20.2/x64/bin/npm config get cache
-2026-04-06T05:59:19.6767763Z /home/runner/.npm
-2026-04-06T05:59:19.8127817Z Cache hit for: node-cache-Linux-x64-npm-fe7e0d3e3aebb39cd8cc4410cf16cac96cbc815fd8580ba27ea69655ab2295c9
-2026-04-06T05:59:20.7265536Z Received 88328330 of 88328330 (100.0%), 104.9 MBs/sec
-2026-04-06T05:59:20.7267007Z Cache Size: ~84 MB (88328330 B)
-2026-04-06T05:59:20.7331748Z [command]/usr/bin/tar -xf /home/runner/work/_temp/c5a1ea93-ead9-416f-9788-67fda3e08ea6/cache.tzst -P -C /home/runner/work/MG-Mobile-admin/MG-Mobile-admin --use-compress-program unzstd
-2026-04-06T05:59:21.0218600Z Cache restored successfully
-2026-04-06T05:59:21.0266551Z Cache restored from key: node-cache-Linux-x64-npm-fe7e0d3e3aebb39cd8cc4410cf16cac96cbc815fd8580ba27ea69655ab2295c9
-2026-04-06T05:59:21.0422257Z ##[group]Run npm ci
-2026-04-06T05:59:21.0422637Z [36;1mnpm ci[0m
-2026-04-06T05:59:21.0465070Z shell: /usr/bin/bash -e ***0***
-2026-04-06T05:59:21.0465465Z ##[endgroup]
-2026-04-06T05:59:25.9256128Z npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
-2026-04-06T05:59:26.1014003Z npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
-2026-04-06T05:59:26.2446061Z npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
-2026-04-06T05:59:26.2458095Z npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
-2026-04-06T05:59:26.2484617Z npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
-2026-04-06T05:59:26.2519903Z npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
-2026-04-06T05:59:32.6164090Z 
-2026-04-06T05:59:32.6164977Z added 927 packages, and audited 928 packages in 12s
-2026-04-06T05:59:32.6165489Z 
-2026-04-06T05:59:32.6185591Z 169 packages are looking for funding
-2026-04-06T05:59:32.6187399Z   run `npm fund` for details
-2026-04-06T05:59:32.6370328Z 
-2026-04-06T05:59:32.6372184Z 10 vulnerabilities (3 moderate, 7 high)
-2026-04-06T05:59:32.6381549Z 
-2026-04-06T05:59:32.6389766Z To address all issues, run:
-2026-04-06T05:59:32.6394433Z   npm audit fix
-2026-04-06T05:59:32.6394729Z 
-2026-04-06T05:59:32.6394995Z Run `npm audit` for details.
-2026-04-06T05:59:32.7055743Z ##[group]Run expo/expo-github-action@v8
-2026-04-06T05:59:32.7056167Z with:
-2026-04-06T05:59:32.7056494Z   eas-version: latest
-2026-04-06T05:59:32.7056912Z   token: ***
-2026-04-06T05:59:32.7057230Z   expo-cache: true
-2026-04-06T05:59:32.7057767Z   eas-cache: true
-2026-04-06T05:59:32.7058055Z   packager: yarn
-2026-04-06T05:59:32.7058356Z   patch-watchers: true
-2026-04-06T05:59:32.7058670Z ##[endgroup]
-2026-04-06T05:59:32.8587245Z Skipped installing expo-cli: 'expo-version' not provided.
-2026-04-06T05:59:33.2744079Z ##[group]Installing eas-cli (18.5.0) from cache or with yarn
-2026-04-06T05:59:33.3554344Z ##[warning]Failed to restore: Cache service responded with 400
-2026-04-06T05:59:33.3565583Z [command]/usr/local/bin/yarn add eas-cli@18.5.0
-2026-04-06T05:59:33.4823747Z yarn add v1.22.22
-2026-04-06T05:59:33.4957502Z info No lockfile found.
-2026-04-06T05:59:33.5117335Z [1/4] Resolving packages...
-2026-04-06T05:59:33.7348505Z warning eas-cli > tar@7.5.7: Old versions of tar are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
-2026-04-06T05:59:34.3212222Z warning eas-cli > @expo/steps > lodash.get@4.4.2: This package is deprecated. Use the optional chaining (?.) operator instead.
-2026-04-06T05:59:34.3235170Z warning eas-cli > @expo/plist > @xmldom/xmldom@0.7.13: this version has critical issues, please update to the latest version
-2026-04-06T05:59:34.3237001Z warning eas-cli > @expo/prebuild-config > @expo/config-plugins > @expo/plist > @xmldom/xmldom@0.7.13: this version has critical issues, please update to the latest version
-2026-04-06T05:59:34.3281997Z warning eas-cli > @expo/prebuild-config > @expo/config > glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
-2026-04-06T05:59:34.3285590Z warning eas-cli > @expo/prebuild-config > @expo/config-plugins > glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
-2026-04-06T05:59:34.3288001Z warning eas-cli > minizlib > rimraf > glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
-2026-04-06T05:59:34.5258589Z warning eas-cli > @expo/prebuild-config > @expo/config > sucrase > glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
-2026-04-06T05:59:34.6640205Z warning eas-cli > @expo/logger > bunyan > mv > rimraf@2.4.5: Rimraf versions prior to v4 are no longer supported
-2026-04-06T05:59:34.6647254Z warning eas-cli > @expo/logger > bunyan > mv > rimraf > glob@6.0.4: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
-2026-04-06T05:59:34.9646565Z warning eas-cli > @expo/logger > bunyan > mv > rimraf > glob > inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
-2026-04-06T05:59:35.2372623Z [2/4] Fetching packages...
-2026-04-06T05:59:41.7242977Z [3/4] Linking dependencies...
-2026-04-06T05:59:41.7260075Z warning "eas-cli > @expo/plugin-help > @oclif/core > ts-node@10.9.2" has unmet peer dependency "@types/node@*".
-2026-04-06T05:59:41.7263252Z warning "eas-cli > @expo/plugin-help > @oclif/core > ts-node@10.9.2" has unmet peer dependency "typescript@>=2.7".
-2026-04-06T05:59:44.5585972Z [4/4] Building fresh packages...
-2026-04-06T05:59:46.4151126Z success Saved lockfile.
-2026-04-06T05:59:46.4431709Z success Saved 309 new dependencies.
-2026-04-06T05:59:46.4433808Z info Direct dependencies
-2026-04-06T05:59:46.4435228Z └─ eas-cli@18.5.0
-2026-04-06T05:59:46.4449516Z info All dependencies
-2026-04-06T05:59:46.4452309Z ├─ @0no-co/graphql.web@1.2.0
-2026-04-06T05:59:46.4454307Z ├─ @babel/compat-data@7.29.0
-2026-04-06T05:59:46.4455373Z ├─ @babel/core@7.29.0
-2026-04-06T05:59:46.4456541Z ├─ @babel/helper-compilation-targets@7.28.6
-2026-04-06T05:59:46.4458732Z ├─ @babel/helper-globals@7.28.0
-2026-04-06T05:59:46.4460871Z ├─ @babel/helper-module-imports@7.28.6
-2026-04-06T05:59:46.4461781Z ├─ @babel/helper-plugin-utils@7.28.6
-2026-04-06T05:59:46.4462570Z ├─ @babel/helper-string-parser@7.27.1
-2026-04-06T05:59:46.4463336Z ├─ @babel/helper-validator-option@7.27.1
-2026-04-06T05:59:46.4463972Z ├─ @babel/helpers@7.29.2
-2026-04-06T05:59:46.4464337Z ├─ @babel/highlight@7.25.9
-2026-04-06T05:59:46.4465155Z ├─ @babel/plugin-transform-modules-commonjs@7.28.6
-2026-04-06T05:59:46.4465887Z ├─ @cspotcode/source-map-support@0.8.1
-2026-04-06T05:59:46.4466514Z ├─ @expo/apple-utils@2.1.16
-2026-04-06T05:59:46.4466894Z ├─ @expo/bunyan@4.0.1
-2026-04-06T05:59:46.4467302Z ├─ @expo/code-signing-certificates@0.0.5
-2026-04-06T05:59:46.4467910Z ├─ @expo/config-plugins@55.0.7
-2026-04-06T05:59:46.4468493Z ├─ @expo/config@55.0.10
-2026-04-06T05:59:46.4469161Z ├─ @expo/eas-json@18.5.0
-2026-04-06T05:59:46.4469793Z ├─ @expo/env@1.0.7
-2026-04-06T05:59:46.4470210Z ├─ @expo/image-utils@0.6.5
-2026-04-06T05:59:46.4470701Z ├─ @expo/json-file@10.0.13
-2026-04-06T05:59:46.4471343Z ├─ @expo/multipart-body-parser@2.0.0
-2026-04-06T05:59:46.4472028Z ├─ @expo/osascript@2.1.4
-2026-04-06T05:59:46.4472473Z ├─ @expo/package-manager@1.9.10
-2026-04-06T05:59:46.4473099Z ├─ @expo/pkcs12@0.1.3
-2026-04-06T05:59:46.4473430Z ├─ @expo/plist@0.2.0
-2026-04-06T05:59:46.4473823Z ├─ @expo/plugin-help@5.1.23
-2026-04-06T05:59:46.4474451Z ├─ @expo/plugin-warn-if-update-available@2.5.1
-2026-04-06T05:59:46.4474995Z ├─ @expo/prebuild-config@8.0.17
-2026-04-06T05:59:46.4475519Z ├─ @expo/require-utils@55.0.3
-2026-04-06T05:59:46.4476076Z ├─ @expo/results@1.0.0
-2026-04-06T05:59:46.4476605Z ├─ @expo/rudder-sdk-node@1.1.1
-2026-04-06T05:59:46.4476955Z ├─ @expo/steps@18.5.0
-2026-04-06T05:59:46.4477517Z ├─ @expo/timeago.js@1.0.0
-2026-04-06T05:59:46.4477856Z ├─ @hapi/topo@5.1.0
-2026-04-06T05:59:46.4478166Z ├─ @isaacs/cliui@8.0.2
-2026-04-06T05:59:46.4478657Z ├─ @isaacs/fs-minipass@4.0.1
-2026-04-06T05:59:46.4479508Z ├─ @jridgewell/gen-mapping@0.3.13
-2026-04-06T05:59:46.4480112Z ├─ @jridgewell/remapping@2.3.5
-2026-04-06T05:59:46.4480691Z ├─ @jridgewell/resolve-uri@3.1.2
-2026-04-06T05:59:46.4481178Z ├─ @jridgewell/sourcemap-codec@1.5.5
-2026-04-06T05:59:46.4481894Z ├─ @jridgewell/trace-mapping@0.3.31
-2026-04-06T05:59:46.4482292Z ├─ @nodelib/fs.scandir@2.1.5
-2026-04-06T05:59:46.4482637Z ├─ @nodelib/fs.stat@2.0.5
-2026-04-06T05:59:46.4483018Z ├─ @oclif/plugin-autocomplete@3.2.45
-2026-04-06T05:59:46.4483410Z ├─ @pkgjs/parseargs@0.11.0
-2026-04-06T05:59:46.4483808Z ├─ @react-native/normalize-colors@0.76.2
-2026-04-06T05:59:46.4484256Z ├─ @segment/ajv-human-errors@2.16.0
-2026-04-06T05:59:46.4484689Z ├─ @segment/loosely-validate-event@2.0.0
-2026-04-06T05:59:46.4485103Z ├─ @sentry-internal/tracing@7.77.0
-2026-04-06T05:59:46.4485459Z ├─ @sentry/node@7.77.0
-2026-04-06T05:59:46.4485781Z ├─ @sideway/address@4.1.5
-2026-04-06T05:59:46.4486115Z ├─ @tsconfig/node10@1.0.12
-2026-04-06T05:59:46.4486446Z ├─ @tsconfig/node12@1.0.11
-2026-04-06T05:59:46.4486774Z ├─ @tsconfig/node14@1.0.3
-2026-04-06T05:59:46.4487098Z ├─ @tsconfig/node16@1.0.4
-2026-04-06T05:59:46.4487414Z ├─ @types/bunyan@1.8.11
-2026-04-06T05:59:46.4487756Z ├─ @types/cli-progress@3.11.6
-2026-04-06T05:59:46.4488384Z ├─ @urql/core@4.0.11
-2026-04-06T05:59:46.4489089Z ├─ @urql/exchange-retry@1.2.0
-2026-04-06T05:59:46.4489505Z ├─ acorn-walk@8.3.5
-2026-04-06T05:59:46.4489807Z ├─ acorn@8.16.0
-2026-04-06T05:59:46.4490109Z ├─ agent-base@6.0.2
-2026-04-06T05:59:46.4490415Z ├─ ajv-formats@2.1.1
-2026-04-06T05:59:46.4490905Z ├─ ajv@8.11.0
-2026-04-06T05:59:46.4491207Z ├─ ansicolors@0.3.2
-2026-04-06T05:59:46.4491500Z ├─ ansis@3.17.0
-2026-04-06T05:59:46.4491778Z ├─ arg@4.1.3
-2026-04-06T05:59:46.4492065Z ├─ argparse@1.0.10
-2026-04-06T05:59:46.4492372Z ├─ array-union@2.1.0
-2026-04-06T05:59:46.4492664Z ├─ asn1@0.2.6
-2026-04-06T05:59:46.4492959Z ├─ astral-regex@2.0.0
-2026-04-06T05:59:46.4493261Z ├─ async@3.2.6
-2026-04-06T05:59:46.4493548Z ├─ asynckit@0.4.0
-2026-04-06T05:59:46.4493876Z ├─ balanced-match@1.0.2
-2026-04-06T05:59:46.4494200Z ├─ bare-events@2.8.2
-2026-04-06T05:59:46.4494571Z ├─ baseline-browser-mapping@2.10.15
-2026-04-06T05:59:46.4494944Z ├─ better-opn@3.0.2
-2026-04-06T05:59:46.4495271Z ├─ bplist-creator@0.1.0
-2026-04-06T05:59:46.4495608Z ├─ bplist-parser@0.3.2
-2026-04-06T05:59:46.4495909Z ├─ braces@3.0.3
-2026-04-06T05:59:46.4496216Z ├─ browserslist@4.28.2
-2026-04-06T05:59:46.4496514Z ├─ bunyan@1.8.15
-2026-04-06T05:59:46.4496866Z ├─ call-bind-apply-helpers@1.0.2
-2026-04-06T05:59:46.4497244Z ├─ caniuse-lite@1.0.30001785
-2026-04-06T05:59:46.4497570Z ├─ cardinal@2.1.1
-2026-04-06T05:59:46.4497850Z ├─ charenc@0.0.2
-2026-04-06T05:59:46.4498127Z ├─ chownr@3.0.0
-2026-04-06T05:59:46.4498417Z ├─ cli-cursor@3.1.0
-2026-04-06T05:59:46.4498720Z ├─ cli-progress@3.12.0
-2026-04-06T05:59:46.4499302Z ├─ cli-spinners@2.9.2
-2026-04-06T05:59:46.4499662Z ├─ clone@1.0.4
-2026-04-06T05:59:46.4500188Z ├─ color-convert@2.0.1
-2026-04-06T05:59:46.4500728Z ├─ color-name@1.1.4
-2026-04-06T05:59:46.4501254Z ├─ combined-stream@1.0.8
-2026-04-06T05:59:46.4501802Z ├─ commander@4.1.1
-2026-04-06T05:59:46.4502327Z ├─ component-type@1.2.2
-2026-04-06T05:59:46.4502871Z ├─ concat-map@0.0.1
-2026-04-06T05:59:46.4503391Z ├─ content-type@1.0.5
-2026-04-06T05:59:46.4503792Z ├─ convert-source-map@2.0.0
-2026-04-06T05:59:46.4504142Z ├─ create-require@1.1.1
-2026-04-06T05:59:46.4504459Z ├─ cross-spawn@7.0.6
-2026-04-06T05:59:46.4504754Z ├─ crypt@0.0.2
-2026-04-06T05:59:46.4505074Z ├─ crypto-random-string@2.0.0
-2026-04-06T05:59:46.4505411Z ├─ dateformat@4.6.3
-2026-04-06T05:59:46.4505734Z ├─ defaults@1.0.4
-2026-04-06T05:59:46.4506058Z ├─ define-lazy-prop@2.0.0
-2026-04-06T05:59:46.4506402Z ├─ delayed-stream@1.0.0
-2026-04-06T05:59:46.4506698Z ├─ diff@7.0.0
-2026-04-06T05:59:46.4506994Z ├─ dir-glob@3.0.1
-2026-04-06T05:59:46.4507273Z ├─ domino@2.1.7
-2026-04-06T05:59:46.4507570Z ├─ dotenv-expand@11.0.7
-2026-04-06T05:59:46.4507876Z ├─ dotenv@16.3.1
-2026-04-06T05:59:46.4508184Z ├─ dtrace-provider@0.8.8
-2026-04-06T05:59:46.4508512Z ├─ dunder-proto@1.0.1
-2026-04-06T05:59:46.4509070Z ├─ eas-cli@18.5.0
-2026-04-06T05:59:46.4509461Z ├─ eastasianwidth@0.2.0
-2026-04-06T05:59:46.4509825Z ├─ electron-to-chromium@1.5.331
-2026-04-06T05:59:46.4510179Z ├─ env-paths@2.2.0
-2026-04-06T05:59:46.4510480Z ├─ env-string@1.0.1
-2026-04-06T05:59:46.4510794Z ├─ envinfo@7.11.0
-2026-04-06T05:59:46.4511090Z ├─ err-code@2.0.3
-2026-04-06T05:59:46.4511383Z ├─ error-ex@1.3.4
-2026-04-06T05:59:46.4511711Z ├─ es-define-property@1.0.1
-2026-04-06T05:59:46.4512070Z ├─ es-object-atoms@1.1.1
-2026-04-06T05:59:46.4512421Z ├─ es-set-tostringtag@2.1.0
-2026-04-06T05:59:46.4512743Z ├─ escalade@3.2.0
-2026-04-06T05:59:46.4513026Z ├─ esprima@4.0.1
-2026-04-06T05:59:46.4513343Z ├─ events-universal@1.0.1
-2026-04-06T05:59:46.4513666Z ├─ exec-async@2.2.0
-2026-04-06T05:59:46.4513981Z ├─ fast-deep-equal@3.1.3
-2026-04-06T05:59:46.4514302Z ├─ fast-fifo@1.3.2
-2026-04-06T05:59:46.4514595Z ├─ fast-glob@3.3.2
-2026-04-06T05:59:46.4514879Z ├─ fast-uri@3.1.0
-2026-04-06T05:59:46.4515161Z ├─ fastq@1.20.1
-2026-04-06T05:59:46.4515431Z ├─ fdir@6.5.0
-2026-04-06T05:59:46.4515721Z ├─ fetch-retry@4.1.1
-2026-04-06T05:59:46.4516022Z ├─ figures@3.2.0
-2026-04-06T05:59:46.4516312Z ├─ filelist@1.0.6
-2026-04-06T05:59:46.4516603Z ├─ fill-range@7.1.1
-2026-04-06T05:59:46.4516895Z ├─ find-up@4.1.0
-2026-04-06T05:59:46.4517457Z ├─ foreground-child@3.3.1
-2026-04-06T05:59:46.4517868Z ├─ form-data@4.0.5
-2026-04-06T05:59:46.4518181Z ├─ gensync@1.0.0-beta.2
-2026-04-06T05:59:46.4518503Z ├─ get-intrinsic@1.3.0
-2026-04-06T05:59:46.4519079Z ├─ get-proto@1.0.1
-2026-04-06T05:59:46.4519602Z ├─ glob@10.5.0
-2026-04-06T05:59:46.4519886Z ├─ globby@11.1.0
-2026-04-06T05:59:46.4520189Z ├─ golden-fleece@1.0.9
-2026-04-06T05:59:46.4520519Z ├─ gradle-to-js@2.0.1
-2026-04-06T05:59:46.4520842Z ├─ graphql-tag@2.12.6
-2026-04-06T05:59:46.4521149Z ├─ graphql@16.8.1
-2026-04-06T05:59:46.4521450Z ├─ has-symbols@1.1.0
-2026-04-06T05:59:46.4521767Z ├─ has-tostringtag@1.0.2
-2026-04-06T05:59:46.4522095Z ├─ hosted-git-info@7.0.2
-2026-04-06T05:59:46.4522407Z ├─ http-call@5.3.0
-2026-04-06T05:59:46.4522729Z ├─ https-proxy-agent@5.0.1
-2026-04-06T05:59:46.4523057Z ├─ hyperlinker@1.0.0
-2026-04-06T05:59:46.4523343Z ├─ ignore@5.3.0
-2026-04-06T05:59:46.4523640Z ├─ imurmurhash@0.1.4
-2026-04-06T05:59:46.4523939Z ├─ inflight@1.0.6
-2026-04-06T05:59:46.4524240Z ├─ inherits@2.0.4
-2026-04-06T05:59:46.4524531Z ├─ invariant@2.2.4
-2026-04-06T05:59:46.4524830Z ├─ is-arrayish@0.2.1
-2026-04-06T05:59:46.4525124Z ├─ is-buffer@1.1.6
-2026-04-06T05:59:46.4525420Z ├─ is-docker@2.2.1
-2026-04-06T05:59:46.4525713Z ├─ is-extglob@2.1.1
-2026-04-06T05:59:46.4526009Z ├─ is-glob@4.0.3
-2026-04-06T05:59:46.4526316Z ├─ is-interactive@1.0.0
-2026-04-06T05:59:46.4526629Z ├─ is-number@7.0.0
-2026-04-06T05:59:46.4526937Z ├─ is-retry-allowed@1.2.0
-2026-04-06T05:59:46.4527260Z ├─ is-stream@2.0.1
-2026-04-06T05:59:46.4527576Z ├─ is-unicode-supported@0.1.0
-2026-04-06T05:59:46.4527900Z ├─ isexe@2.0.0
-2026-04-06T05:59:46.4528195Z ├─ jackspeak@3.4.3
-2026-04-06T05:59:46.4528466Z ├─ jake@10.9.4
-2026-04-06T05:59:46.4528754Z ├─ jimp-compact@0.16.1
-2026-04-06T05:59:46.4529528Z ├─ jks-js@1.1.0
-2026-04-06T05:59:46.4529839Z ├─ join-component@1.1.0
-2026-04-06T05:59:46.4530148Z ├─ js-yaml@3.14.2
-2026-04-06T05:59:46.4530423Z ├─ jsep@1.4.0
-2026-04-06T05:59:46.4530691Z ├─ jsesc@3.1.0
-2026-04-06T05:59:46.4531047Z ├─ json-parse-better-errors@1.0.2
-2026-04-06T05:59:46.4531401Z ├─ keychain@1.5.0
-2026-04-06T05:59:46.4531681Z ├─ kleur@3.0.3
-2026-04-06T05:59:46.4531962Z ├─ lilconfig@3.1.3
-2026-04-06T05:59:46.4532273Z ├─ lines-and-columns@1.2.4
-2026-04-06T05:59:46.4532639Z ├─ locate-path@5.0.0
-2026-04-06T05:59:46.4532960Z ├─ lodash.clonedeep@4.5.0
-2026-04-06T05:59:46.4533492Z ├─ lodash.get@4.4.2
-2026-04-06T05:59:46.4534012Z ├─ lodash.merge@4.6.2
-2026-04-06T05:59:46.4534344Z ├─ loose-envify@1.4.0
-2026-04-06T05:59:46.4534648Z ├─ lru-cache@10.4.3
-2026-04-06T05:59:46.4534944Z ├─ make-error@1.3.6
-2026-04-06T05:59:46.4535263Z ├─ math-intrinsics@1.1.0
-2026-04-06T05:59:46.4535563Z ├─ md5@2.3.0
-2026-04-06T05:59:46.4535847Z ├─ micromatch@4.0.8
-2026-04-06T05:59:46.4536156Z ├─ mime-db@1.52.0
-2026-04-06T05:59:46.4536452Z ├─ mime-types@2.1.35
-2026-04-06T05:59:46.4536744Z ├─ mime@3.0.0
-2026-04-06T05:59:46.4537034Z ├─ mimic-fn@2.1.0
-2026-04-06T05:59:46.4537336Z ├─ minimatch@10.2.5
-2026-04-06T05:59:46.4537629Z ├─ minimist@1.2.8
-2026-04-06T05:59:46.4537930Z ├─ minipass@7.1.3
-2026-04-06T05:59:46.4538221Z ├─ minizlib@3.0.1
-2026-04-06T05:59:46.4538497Z ├─ mkdirp@0.5.6
-2026-04-06T05:59:46.4538772Z ├─ moment@2.30.1
-2026-04-06T05:59:46.4539226Z ├─ ms@2.1.3
-2026-04-06T05:59:46.4539505Z ├─ multipasta@0.2.7
-2026-04-06T05:59:46.4539820Z ├─ mute-stream@0.0.8
-2026-04-06T05:59:46.4540106Z ├─ mv@2.1.1
-2026-04-06T05:59:46.4540359Z ├─ mz@2.7.0
-2026-04-06T05:59:46.4540618Z ├─ nan@2.26.2
-2026-04-06T05:59:46.4540890Z ├─ nanoid@3.3.8
-2026-04-06T05:59:46.4541192Z ├─ natural-orderby@2.0.3
-2026-04-06T05:59:46.4541498Z ├─ ncp@2.0.0
-2026-04-06T05:59:46.4541792Z ├─ node-fetch@2.6.7
-2026-04-06T05:59:46.4542089Z ├─ node-int64@0.4.0
-2026-04-06T05:59:46.4542393Z ├─ node-releases@2.0.37
-2026-04-06T05:59:46.4542709Z ├─ node-rsa@1.1.1
-2026-04-06T05:59:46.4543016Z ├─ node-stream-zip@1.15.0
-2026-04-06T05:59:46.4543355Z ├─ npm-package-arg@11.0.3
-2026-04-06T05:59:46.4543681Z ├─ nullthrows@1.1.1
-2026-04-06T05:59:46.4543995Z ├─ object-assign@4.1.1
-2026-04-06T05:59:46.4544486Z ├─ object-treeify@1.1.33
-2026-04-06T05:59:46.4544818Z ├─ onetime@5.1.2
-2026-04-06T05:59:46.4545104Z ├─ open@8.4.2
-2026-04-06T05:59:46.4545375Z ├─ ora@5.1.0
-2026-04-06T05:59:46.4545648Z ├─ p-limit@2.3.0
-2026-04-06T05:59:46.4545947Z ├─ p-locate@4.1.0
-2026-04-06T05:59:46.4546414Z ├─ p-try@2.2.0
-2026-04-06T05:59:46.4546756Z ├─ package-json-from-dist@1.0.1
-2026-04-06T05:59:46.4547118Z ├─ parse-json@4.0.0
-2026-04-06T05:59:46.4547964Z ├─ parse-png@2.1.0
-2026-04-06T05:59:46.4548295Z ├─ password-prompt@1.1.3
-2026-04-06T05:59:46.4548632Z ├─ path-exists@4.0.0
-2026-04-06T05:59:46.4549431Z ├─ path-is-absolute@1.0.1
-2026-04-06T05:59:46.4549772Z ├─ path-key@3.1.1
-2026-04-06T05:59:46.4550083Z ├─ path-scurry@1.11.1
-2026-04-06T05:59:46.4550392Z ├─ path-type@4.0.0
-2026-04-06T05:59:46.4550688Z ├─ picomatch@4.0.4
-2026-04-06T05:59:46.4550974Z ├─ pirates@4.0.7
-2026-04-06T05:59:46.4551251Z ├─ pkg-dir@4.2.0
-2026-04-06T05:59:46.4551753Z ├─ plist@3.1.0
-2026-04-06T05:59:46.4552247Z ├─ pngjs@7.0.0
-2026-04-06T05:59:46.4552736Z ├─ proc-log@4.2.0
-2026-04-06T05:59:46.4553073Z ├─ promise-limit@2.7.0
-2026-04-06T05:59:46.4553402Z ├─ promise-retry@2.0.1
-2026-04-06T05:59:46.4553700Z ├─ prompts@2.4.2
-2026-04-06T05:59:46.4553988Z ├─ punycode@2.3.1
-2026-04-06T05:59:46.4554297Z ├─ qrcode-terminal@0.12.0
-2026-04-06T05:59:46.4554648Z ├─ queue-microtask@1.2.3
-2026-04-06T05:59:46.4554953Z ├─ redeyed@2.1.1
-2026-04-06T05:59:46.4555292Z ├─ remove-trailing-slash@0.1.1
-2026-04-06T05:59:46.4555650Z ├─ restore-cursor@3.1.0
-2026-04-06T05:59:46.4556737Z ├─ retry@0.12.0
-2026-04-06T05:59:46.4557582Z ├─ reusify@1.1.0
-2026-04-06T05:59:46.4557899Z ├─ rimraf@5.0.10
-2026-04-06T05:59:46.4558219Z ├─ run-parallel@1.2.0
-2026-04-06T05:59:46.4558548Z ├─ safe-buffer@5.2.1
-2026-04-06T05:59:46.4559085Z ├─ safe-json-stringify@1.2.0
-2026-04-06T05:59:46.4559444Z ├─ safer-buffer@2.1.2
-2026-04-06T05:59:46.4559742Z ├─ sax@1.6.0
-2026-04-06T05:59:46.4560057Z ├─ set-interval-async@3.0.3
-2026-04-06T05:59:46.4560406Z ├─ shebang-command@2.0.0
-2026-04-06T05:59:46.4560742Z ├─ shebang-regex@3.0.0
-2026-04-06T05:59:46.4561091Z ├─ simple-plist@1.3.1
-2026-04-06T05:59:46.4561408Z ├─ sisteransi@1.0.5
-2026-04-06T05:59:46.4561713Z ├─ slice-ansi@4.0.0
-2026-04-06T05:59:46.4562018Z ├─ sprintf-js@1.0.3
-2026-04-06T05:59:46.4562326Z ├─ stream-buffers@2.2.0
-2026-04-06T05:59:46.4562657Z ├─ streamx@2.25.0
-2026-04-06T05:59:46.4562982Z ├─ string-width-cjs@4.2.3
-2026-04-06T05:59:46.4563319Z ├─ strip-ansi-cjs@6.0.1
-2026-04-06T05:59:46.4563633Z ├─ sucrase@3.35.0
-2026-04-06T05:59:46.4563950Z ├─ supports-color@7.2.0
-2026-04-06T05:59:46.4564287Z ├─ supports-hyperlinks@2.3.0
-2026-04-06T05:59:46.4564888Z ├─ tar-stream@3.1.7
-2026-04-06T05:59:46.4565189Z ├─ tar@7.5.7
-2026-04-06T05:59:46.4565482Z ├─ temp-dir@2.0.0
-2026-04-06T05:59:46.4565786Z ├─ text-decoder@1.2.7
-2026-04-06T05:59:46.4566127Z ├─ thenify-all@1.6.0
-2026-04-06T05:59:46.4566465Z ├─ thenify@3.3.1
-2026-04-06T05:59:46.4566795Z ├─ tinyglobby@0.2.15
-2026-04-06T05:59:46.4567137Z ├─ to-regex-range@5.0.1
-2026-04-06T05:59:46.4567487Z ├─ tr46@0.0.3
-2026-04-06T05:59:46.4568041Z ├─ ts-deepmerge@6.2.0
-2026-04-06T05:59:46.4568486Z ├─ ts-interface-checker@0.1.13
-2026-04-06T05:59:46.4569251Z ├─ ts-node@10.9.2
-2026-04-06T05:59:46.4569666Z ├─ tslib@2.8.1
-2026-04-06T05:59:46.4569991Z ├─ tunnel-agent@0.6.0
-2026-04-06T05:59:46.4570325Z ├─ turndown@7.1.2
-2026-04-06T05:59:46.4570828Z ├─ type-fest@0.21.3
-2026-04-06T05:59:46.4571160Z ├─ undici-types@7.18.2
-2026-04-06T05:59:46.4571531Z ├─ unique-string@2.0.0
-2026-04-06T05:59:46.4571867Z ├─ untildify@4.0.0
-2026-04-06T05:59:46.4572250Z ├─ update-browserslist-db@1.2.3
-2026-04-06T05:59:46.4572622Z ├─ uri-js@4.4.1
-2026-04-06T05:59:46.4572933Z ├─ uuid@8.3.2
-2026-04-06T05:59:46.4573270Z ├─ v8-compile-cache-lib@3.0.1
-2026-04-06T05:59:46.4573730Z ├─ validate-npm-package-name@5.0.1
-2026-04-06T05:59:46.4574142Z ├─ webidl-conversions@3.0.1
-2026-04-06T05:59:46.4574489Z ├─ which@2.0.2
-2026-04-06T05:59:46.4574818Z ├─ wrap-ansi-cjs@7.0.0
-2026-04-06T05:59:46.4575140Z ├─ yallist@5.0.0
-2026-04-06T05:59:46.4575460Z ├─ yaml@2.6.0
-2026-04-06T05:59:46.4575761Z ├─ yn@3.1.1
-2026-04-06T05:59:46.4576061Z └─ zod@4.3.6
-2026-04-06T05:59:46.4576367Z Done in 12.97s.
-2026-04-06T05:59:52.0895316Z [command]/usr/bin/tar --posix -cf cache.tzst --exclude cache.tzst -P -C /home/runner/work/MG-Mobile-admin/MG-Mobile-admin --files-from manifest.txt --use-compress-program zstdmt
-2026-04-06T05:59:52.8207402Z ##[warning]Failed to save: <h2>Our services aren't available right now</h2><p>We're working to restore all services as soon as possible. Please check back soon.</p>02EvTaQAAAADffm+ybPAUQ4Ugbk3neJT7Q0hJMzBFREdFMDMwOQBFZGdl
-2026-04-06T05:59:52.8224295Z ##[endgroup]
-2026-04-06T05:59:52.8225330Z ##[group]Validating authenticated account
-2026-04-06T05:59:52.8247592Z [command]/opt/hostedtoolcache/eas-cli/18.5.0/x64/node_modules/.bin/eas whoami
-2026-04-06T05:59:53.6053405Z abhishek19081992 (authenticated using EXPO_TOKEN)
-2026-04-06T05:59:53.6053971Z ab.gupta92@gmail.com
-2026-04-06T05:59:53.8796541Z ##[endgroup]
-2026-04-06T05:59:53.8797111Z ##[group]Patching system watchers for the 'ENOSPC' error
-2026-04-06T05:59:53.8813047Z [command]/usr/bin/sudo sysctl fs.inotify.max_user_instances=524288
-2026-04-06T05:59:53.8891732Z fs.inotify.max_user_instances = 524288
-2026-04-06T05:59:53.8917591Z [command]/usr/bin/sudo sysctl fs.inotify.max_user_watches=524288
-2026-04-06T05:59:53.8988617Z fs.inotify.max_user_watches = 524288
-2026-04-06T05:59:53.9012737Z [command]/usr/bin/sudo sysctl fs.inotify.max_queued_events=524288
-2026-04-06T05:59:53.9084051Z fs.inotify.max_queued_events = 524288
-2026-04-06T05:59:53.9107030Z [command]/usr/bin/sudo sysctl -p
-2026-04-06T05:59:53.9181686Z vm.max_map_count = 262144
-2026-04-06T05:59:53.9182389Z fs.inotify.max_user_watches = 655360
-2026-04-06T05:59:53.9183218Z fs.inotify.max_user_instances = 1280
-2026-04-06T05:59:53.9183875Z vm.mmap_rnd_bits = 28
-2026-04-06T05:59:53.9192776Z Patched system watchers for the `ENOSPC` error.
-2026-04-06T05:59:53.9193817Z ##[endgroup]
-2026-04-06T05:59:53.9380462Z ##[group]Run eas init --id 394513c4-fa8f-4ecf-8f5e-e54e01dd0863 --non-interactive
-2026-04-06T05:59:53.9381140Z [36;1meas init --id 394513c4-fa8f-4ecf-8f5e-e54e01dd0863 --non-interactive[0m
-2026-04-06T05:59:53.9410030Z shell: /usr/bin/bash -e ***0***
-2026-04-06T05:59:53.9410371Z env:
-2026-04-06T05:59:53.9410713Z   EXPO_TOKEN: ***
-2026-04-06T05:59:53.9411001Z ##[endgroup]
-2026-04-06T05:59:55.2809745Z ✔ Project already linked (ID: 394513c4-fa8f-4ecf-8f5e-e54e01dd0863)
-2026-04-06T05:59:56.0153197Z ##[group]Run set -euo pipefail
-2026-04-06T05:59:56.0153831Z [36;1mset -euo pipefail[0m
-2026-04-06T05:59:56.0154378Z [36;1mecho "Starting EAS build..."[0m
-2026-04-06T05:59:56.0155371Z [36;1meas build --platform android --profile preview --non-interactive --json | tee /tmp/eas-output.json[0m
-2026-04-06T05:59:56.0156604Z [36;1mAPK_URL=$(jq -r '.[0].artifacts.buildUrl // empty' /tmp/eas-output.json)[0m
-2026-04-06T05:59:56.0157423Z [36;1mif [ -z "$APK_URL" ]; then[0m
-2026-04-06T05:59:56.0158232Z [36;1m  echo "Could not extract APK URL from build output, fetching latest build..."[0m
-2026-04-06T05:59:56.0159726Z [36;1m  eas build:list --platform android --status finished --limit 1 --json | tee /tmp/eas-list.json[0m
-2026-04-06T05:59:56.0160849Z [36;1m  APK_URL=$(jq -r '.[0].artifacts.buildUrl' /tmp/eas-list.json)[0m
-2026-04-06T05:59:56.0161616Z [36;1mfi[0m
-2026-04-06T05:59:56.0162431Z [36;1mif [ -z "$APK_URL" ] || [ "$APK_URL" = "null" ]; then[0m
-2026-04-06T05:59:56.0163220Z [36;1m  echo "::error::Failed to get APK URL"[0m
-2026-04-06T05:59:56.0163838Z [36;1m  exit 1[0m
-2026-04-06T05:59:56.0164281Z [36;1mfi[0m
-2026-04-06T05:59:56.0164803Z [36;1mecho "apk_url=$APK_URL" >> "$GITHUB_OUTPUT"[0m
-2026-04-06T05:59:56.0165485Z [36;1mecho "APK URL: $APK_URL"[0m
-2026-04-06T05:59:56.0208222Z shell: /usr/bin/bash -e ***0***
-2026-04-06T05:59:56.0208802Z env:
-2026-04-06T05:59:56.0209684Z   EXPO_TOKEN: ***
-2026-04-06T05:59:56.0210168Z ##[endgroup]
-2026-04-06T05:59:56.0283447Z Starting EAS build...
-2026-04-06T05:59:57.2803321Z The field "cli.appVersionSource" is not set, but it will be required in the future. Learn more: https://docs.expo.dev/build-reference/app-versions/
-2026-04-06T05:59:58.5627378Z Resolved "production" environment for the build. Learn more: https://docs.expo.dev/eas/environment-variables/#setting-the-environment-for-your-builds
-2026-04-06T05:59:58.6017352Z No environment variables with visibility "Plain text" and "Sensitive" found for the "production" environment on EAS.
-2026-04-06T05:59:58.6018243Z 
-2026-04-06T06:00:01.2336820Z 
-2026-04-06T06:00:01.2744337Z 
-2026-04-06T06:00:01.2746710Z The field "cli.appVersionSource" is not set, but it will be required in the future. Learn more: https://docs.expo.dev/build-reference/app-versions/
-2026-04-06T06:00:01.3219416Z ✔ Using remote Android credentials (Expo server)
-2026-04-06T06:00:01.3925276Z ✔ Using Keystore from configuration: Build Credentials 8NkQQ4TaWj (default)
-2026-04-06T06:00:01.3945829Z 
-2026-04-06T06:00:01.3947927Z Compressing project files and uploading to EAS Build. Learn more: https://expo.fyi/eas-build-archive
-2026-04-06T06:00:01.9398654Z - Uploading to EAS Build (0 / 2.2 MB)
-2026-04-06T06:00:02.2311617Z ✔ Uploaded to EAS 
-2026-04-06T06:00:02.2336295Z - Computing project fingerprint
-2026-04-06T06:00:04.2028241Z ✔ Computed project fingerprint
-2026-04-06T06:00:04.9589093Z 
-2026-04-06T06:00:04.9591476Z See logs: https://expo.dev/accounts/abhishek19081992/projects/admin-app/builds/be2fe709-66dd-4027-8963-1f73a43f4171
-2026-04-06T06:00:04.9592235Z 
-2026-04-06T06:00:04.9592808Z Waiting for build to complete. You can press Ctrl+C to exit.
-2026-04-06T06:00:04.9593621Z - Waiting for build to complete.
-2026-04-06T06:25:09.3255838Z ✔ Build finished
-2026-04-06T06:25:09.3262364Z [
-2026-04-06T06:25:09.3262955Z   ***
-2026-04-06T06:25:09.3263566Z     "id": "be2fe709-66dd-4027-8963-1f73a43f4171",
-2026-04-06T06:25:09.3264277Z     "status": "FINISHED",
-2026-04-06T06:25:09.3264818Z     "platform": "ANDROID",
-2026-04-06T06:25:09.3265396Z     "artifacts": ***
-2026-04-06T06:25:09.3266245Z       "buildUrl": "https://expo.dev/artifacts/eas/pu8W1pncz13KtXNDQhGZik.apk",
-2026-04-06T06:25:09.3267559Z       "applicationArchiveUrl": "https://expo.dev/artifacts/eas/pu8W1pncz13KtXNDQhGZik.apk"
-2026-04-06T06:25:09.3268551Z     ***,
-2026-04-06T06:25:09.3269434Z     "fingerprint": ***
-2026-04-06T06:25:09.3270142Z       "id": "019d5eb2-fb7d-7d87-9769-379c939aacdc",
-2026-04-06T06:25:09.3271422Z       "hash": "a5a541e354fb87efb7f5c25c95cf21e6a2319329"
-2026-04-06T06:25:09.3272194Z     ***,
-2026-04-06T06:25:09.3272632Z     "initiatingActor": ***
-2026-04-06T06:25:09.3273333Z       "id": "97a73bed-c7fd-409b-b543-8d4cc24d3dda",
-2026-04-06T06:25:09.3274020Z       "displayName": "abhishek19081992"
-2026-04-06T06:25:09.3274621Z     ***,
-2026-04-06T06:25:09.3275047Z     "logFiles": [
-2026-04-06T06:25:09.3283321Z       "https://job-logs.eascdn.net/production/be2fe709-66dd-4027-8963-1f73a43f4171/1775455204759-c16110c8-582a-46fb-bc22-da5ce92b9398.txt?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=www-production%40exponentjs.iam.gserviceaccount.com%2F20260406%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20260406T062026Z&X-Goog-Expires=900&X-Goog-SignedHeaders=host&X-Goog-Signature=47f1bb34b243139b0672375a46811002ca3d161f21ab7966c79c7570726b06c868b2a32ad5616736fea4d9a92cb81086d06d025f790797653984806889930f8ad8a997bc47aa5f33f30531db22b6b785bf4deccccd7f91858992e5ed34a19836022f56127a359c3b134d767455b194b0292fac5dad6f8ff1f60dee0e2a0afb82f78557ae2b3497d492283fafb6bc6bc25f0607a70dc9d543769691a476eff369f5cd648422d2e956355b99391ef8053a4153e482ac291457c76b2dedd1e00fba69f6f80e2bbc773a170530c4ae7e9b6b5c46ff76f5b414020817ea8cf558426dfea7be3ce349c56d02a7e93066246addf916718d8731c20052822fe541112dc2",
-2026-04-06T06:25:09.3297288Z       "https://job-logs.eascdn.net/production/be2fe709-66dd-4027-8963-1f73a43f4171/1775455826753-a9e71f6c-7bae-46b5-9f26-d233adc09f6c.txt?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=www-production%40exponentjs.iam.gserviceaccount.com%2F20260406%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20260406T062137Z&X-Goog-Expires=900&X-Goog-SignedHeaders=host&X-Goog-Signature=7cf849c7dd427f1d2a948af8cc95b5baddb151e45b65d41049084b1b6d86c095c455136370b837322d40a9d9c5fa90feb912fe951b0c363cedaf7ac6136da899254a3725f3a0f96680d727e2a6cb5aec14e8693715a7b9848e1c378a883de445a2178c94828ef858b08fbb8a74c6959e7a0acb4b0bba9b374c633cb0bd4041e185e8feab999e2fb0bab3417244d1e549f7dceddc60a591115318b6543e6e08e3f38a190d5e4b6b122e9e8fb857a874221b9f3fb1f7bf2840cddd5078b589a1f7c63fca88dcc758a311e3dbfbee468088d8e5c8282ee1e447d521d2af2aa0c08892941a99bf1c01d803c301164af243d8ecb5ddadb69b9d87ce9ac55b35e45ebf",
-2026-04-06T06:25:09.3313294Z       "https://job-logs.eascdn.net/production/be2fe709-66dd-4027-8963-1f73a43f4171/1775455833032-fb265d2d-b4fc-4ff7-abc5-b126bde5f8bf.txt?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=www-production%40exponentjs.iam.gserviceaccount.com%2F20260406%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20260406T062026Z&X-Goog-Expires=900&X-Goog-SignedHeaders=host&X-Goog-Signature=7c0ef717c927933eee111cf862d6118f98dbed51a3674f30689156ca383c6017b0826f895ccb3276c3098284e11195a8f4787a5b499cff73332c76da6324063aca2f7d5d6e6cb828c90d103252055b1a0c2fdf16e0d0ec9b777ae357c7f6d9485b9f256d1fa751524500009abd0cf941684fe2a0339b7281a25546b99e06d2568f29eed29e649dfe909fc33a37e4ad1de4dd33180370f8256ec68bb47c89cfb6f15b400a18266300e583f8a3f96f3cf5ee10128071679ffb788d6984c0ce8b75d9bb1d5d4f695f1004d07d8c3819ce72cf03197c1d08f7d8cb20c440f99305e441f94a1e71ac9540e710d5a47e19ff769e66ce42ec59bee5616c6b9e70f83618",
-2026-04-06T06:25:09.3329651Z       "https://job-logs.eascdn.net/production/be2fe709-66dd-4027-8963-1f73a43f4171/1775455833267-46595677-b399-4d5a-812d-4380a8008dcd.txt?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=www-production%40exponentjs.iam.gserviceaccount.com%2F20260406%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20260406T062026Z&X-Goog-Expires=900&X-Goog-SignedHeaders=host&X-Goog-Signature=377a54a00acef48d5ed6e2cab58b018c2a59f4d79cc4f9d86d7b2ec4f5b84b2ffda0f3a3c5ae1cab15247db4932687900421264dc6434950f54fe9f19c2ff55b628e7551a4dc81ca8b15c61287e7e76fc23f69a5428e2eccfe2b0384ae32ad0a52a66a310945d5c3b6c38c22bb2e2aab35f8d06c30f59c908d25afa62c7f11f68da971357d7307ba5a63a5e1fa6b72b4c34ca159b3de803856c2d3bd033cd6e73518e608d7000e62520b03fca63661f1913908348eecc05595160992cc716117d54aa77956947fcacdc64f9185a8a90275aeac804c1b319e1402c83df05d031322d5970212eaa9108aa0d27dec23f23ddbc6686752da30a471bd6c07fbe56bd2",
-2026-04-06T06:25:09.3346627Z       "https://job-logs.eascdn.net/production/be2fe709-66dd-4027-8963-1f73a43f4171/1775455833447-ee8e5817-b27a-4036-bc1f-6b7c0846e88c.txt?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=www-production%40exponentjs.iam.gserviceaccount.com%2F20260406%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20260406T062026Z&X-Goog-Expires=900&X-Goog-SignedHeaders=host&X-Goog-Signature=07415448e18efa1adb7efe6cd6e44c156d55df028a5a9086ed5fc1ab4ff345375c9d97ceb3fd117b2f288069283ef9ad0bf213581d445370a10cb7cd8aee0646025b33ea302ef53c4e8e92c788593ff814aab8641fa66aaa5aee4d00bb7cc70d885b69e5e3194abeb1338ccbd8317aa49e20d84915ceac4a851d4eb2938a3431d54d8ec61cedcde8aff29a0a9ed40f2f16c2123e7ec589e269498cb52656f6e06436bd64ce7ade92149e053fccc61a647ab3fb0c30ba63420e1f91cff7babaf21448c7a33039ecc51d27442b4cd0f65a638dbf6968163a527e5d01322a19658c728481fc188d5a59add645e44e89b95df127597ec4feb4f32a74f5287efc27f7"
-2026-04-06T06:25:09.3354983Z     ],
-2026-04-06T06:25:09.3355872Z     "project": ***
-2026-04-06T06:25:09.3356488Z       "id": "394513c4-fa8f-4ecf-8f5e-e54e01dd0863",
-2026-04-06T06:25:09.3357178Z       "name": "admin-app",
-2026-04-06T06:25:09.3357711Z       "slug": "admin-app",
-2026-04-06T06:25:09.3358239Z       "ownerAccount": ***
-2026-04-06T06:25:09.3359139Z         "id": "d2e62b4e-bb93-4c45-b6c0-810f2cbe46c2",
-2026-04-06T06:25:09.3359836Z         "name": "abhishek19081992"
-2026-04-06T06:25:09.3360437Z       ***
-2026-04-06T06:25:09.3360889Z     ***,
-2026-04-06T06:25:09.3361345Z     "distribution": "STORE",
-2026-04-06T06:25:09.3361925Z     "buildProfile": "preview",
-2026-04-06T06:25:09.3362479Z     "sdkVersion": "54.0.0",
-2026-04-06T06:25:09.3363040Z     "appVersion": "1.0.0",
-2026-04-06T06:25:09.3363576Z     "appBuildVersion": "1",
-2026-04-06T06:25:09.3364344Z     "gitCommitHash": "e397e0055f9defbba39566db91a5c7ced589ef32",
-2026-04-06T06:25:09.3365205Z     "gitCommitMessage": "Drive upload logs added",
-2026-04-06T06:25:09.3365847Z     "priority": "NORMAL",
-2026-04-06T06:25:09.3366457Z     "createdAt": "2026-04-06T06:00:04.516Z",
-2026-04-06T06:25:09.3367150Z     "updatedAt": "2026-04-06T06:25:00.197Z",
-2026-04-06T06:25:09.3367856Z     "completedAt": "2026-04-06T06:24:58.994Z",
-2026-04-06T06:25:09.3368549Z     "expirationDate": "2026-05-06T06:00:04.539Z",
-2026-04-06T06:25:09.3369489Z     "isForIosSimulator": false,
-2026-04-06T06:25:09.3370067Z     "metrics": ***
-2026-04-06T06:25:09.3370589Z       "buildWaitTime": 623512,
-2026-04-06T06:25:09.3371192Z       "buildQueueTime": 48432,
-2026-04-06T06:25:09.3371751Z       "buildDuration": 822082
-2026-04-06T06:25:09.3372287Z     ***
-2026-04-06T06:25:09.3372846Z   ***
-2026-04-06T06:25:09.3373297Z ]
-2026-04-06T06:25:09.3478026Z APK URL: https://expo.dev/artifacts/eas/pu8W1pncz13KtXNDQhGZik.apk
-2026-04-06T06:25:09.3544925Z ##[group]Run curl -L -o admin-app.apk "https://expo.dev/artifacts/eas/pu8W1pncz13KtXNDQhGZik.apk"
-2026-04-06T06:25:09.3545699Z [36;1mcurl -L -o admin-app.apk "https://expo.dev/artifacts/eas/pu8W1pncz13KtXNDQhGZik.apk"[0m
-2026-04-06T06:25:09.3546232Z [36;1mls -lh admin-app.apk[0m
-2026-04-06T06:25:09.3575307Z shell: /usr/bin/bash -e ***0***
-2026-04-06T06:25:09.3575627Z env:
-2026-04-06T06:25:09.3575958Z   EXPO_TOKEN: ***
-2026-04-06T06:25:09.3576228Z ##[endgroup]
-2026-04-06T06:25:09.3674879Z   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-2026-04-06T06:25:09.3675915Z                                  Dload  Upload   Total   Spent    Left  Speed
-2026-04-06T06:25:09.3676370Z 
-2026-04-06T06:25:09.4643560Z   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
-2026-04-06T06:25:09.4644512Z 100    60  100    60    0     0    619      0 --:--:-- --:--:-- --:--:--   625
-2026-04-06T06:25:09.5141096Z 
-2026-04-06T06:25:09.5141991Z 100   618  100   618    0     0   4211      0 --:--:-- --:--:-- --:--:--  4211
-2026-04-06T06:25:09.8179009Z 
-2026-04-06T06:25:10.7162281Z   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
-2026-04-06T06:25:10.7163207Z 100 78.8M  100 78.8M    0     0  58.4M      0  0:00:01  0:00:01 --:--:-- 87.8M
-2026-04-06T06:25:10.7225811Z -rw-r--r-- 1 runner runner 79M Apr  6 06:25 admin-app.apk
-2026-04-06T06:25:10.7280447Z ##[group]Run actions/upload-artifact@v4
-2026-04-06T06:25:10.7280836Z with:
-2026-04-06T06:25:10.7281091Z   name: admin-app-apk
-2026-04-06T06:25:10.7281391Z   path: admin-app/admin-app.apk
-2026-04-06T06:25:10.7281702Z   if-no-files-found: error
-2026-04-06T06:25:10.7281988Z   compression-level: 6
-2026-04-06T06:25:10.7282263Z   overwrite: false
-2026-04-06T06:25:10.7282534Z   include-hidden-files: false
-2026-04-06T06:25:10.7282819Z env:
-2026-04-06T06:25:10.7283138Z   EXPO_TOKEN: ***
-2026-04-06T06:25:10.7283400Z ##[endgroup]
-2026-04-06T06:25:10.9427937Z With the provided path, there will be 1 file uploaded
-2026-04-06T06:25:10.9433620Z Artifact name is valid!
-2026-04-06T06:25:10.9434983Z Root directory input is valid!
-2026-04-06T06:25:11.0640779Z Beginning upload of artifact content to blob storage
-2026-04-06T06:25:11.6979342Z Uploaded bytes 8388608
-2026-04-06T06:25:12.0568130Z Uploaded bytes 16777216
-2026-04-06T06:25:12.6706462Z Uploaded bytes 25165824
-2026-04-06T06:25:13.3398762Z Uploaded bytes 33554432
-2026-04-06T06:25:13.4244675Z Uploaded bytes 36364493
-2026-04-06T06:25:13.4550172Z Finished uploading artifact content to blob storage!
-2026-04-06T06:25:13.4553717Z SHA256 digest of uploaded artifact zip is 4fd1dfb30ab977d4380d97972b5e7da1ce3850f390bff05c0fcd3955028c1789
-2026-04-06T06:25:13.4555594Z Finalizing artifact upload
-2026-04-06T06:25:13.5411271Z Artifact admin-app-apk.zip successfully finalized. Artifact ID 6283213898
-2026-04-06T06:25:13.5412497Z Artifact admin-app-apk has been successfully uploaded! Final size is 36364493 bytes. Artifact ID is 6283213898
-2026-04-06T06:25:13.5419961Z Artifact download URL: https://github.com/abhishekg1981992/MG-Mobile-admin/actions/runs/24020782085/artifacts/6283213898
-2026-04-06T06:25:13.5591144Z ##[group]Run echo "$GDRIVE_CREDENTIALS" > /tmp/gdrive-creds.json
-2026-04-06T06:25:13.5591792Z [36;1mecho "$GDRIVE_CREDENTIALS" > /tmp/gdrive-creds.json[0m
-2026-04-06T06:25:13.5592192Z [36;1m[0m
-2026-04-06T06:25:13.5592452Z [36;1m# Install googleapis[0m
-2026-04-06T06:25:13.5592787Z [36;1mnpm init -y > /dev/null 2>&1[0m
-2026-04-06T06:25:13.5593164Z [36;1mnpm install googleapis > /dev/null 2>&1[0m
-2026-04-06T06:25:13.5593518Z [36;1m[0m
-2026-04-06T06:25:13.5593771Z [36;1mnode << 'SCRIPT'[0m
-2026-04-06T06:25:13.5594159Z [36;1mconst *** google *** = require('googleapis');[0m
-2026-04-06T06:25:13.5594548Z [36;1mconst fs = require('fs');[0m
-2026-04-06T06:25:13.5594868Z [36;1m[0m
-2026-04-06T06:25:13.5595155Z [36;1mfunction setOutput(name, value) ***[0m
-2026-04-06T06:25:13.5595551Z [36;1m  if (!process.env.GITHUB_OUTPUT) ***[0m
-2026-04-06T06:25:13.5595904Z [36;1m    return;[0m
-2026-04-06T06:25:13.5596187Z [36;1m  ***[0m
-2026-04-06T06:25:13.5596669Z [36;1m  fs.appendFileSync(process.env.GITHUB_OUTPUT, `$***name***=$***String(value)***\n`);[0m
-2026-04-06T06:25:13.5597173Z [36;1m***[0m
-2026-04-06T06:25:13.5597430Z [36;1m[0m
-2026-04-06T06:25:13.5597696Z [36;1masync function upload() ***[0m
-2026-04-06T06:25:13.5598185Z [36;1m  const creds = JSON.parse(fs.readFileSync('/tmp/gdrive-creds.json', 'utf8'));[0m
-2026-04-06T06:25:13.5598775Z [36;1m  console.log(`Service account email: $***creds.client_email***`);[0m
-2026-04-06T06:25:13.5599788Z [36;1m  console.log('(Grant this account access to the destination folder or shared drive)\n');[0m
-2026-04-06T06:25:13.5600290Z [36;1m[0m
-2026-04-06T06:25:13.5600612Z [36;1m  const auth = new google.auth.GoogleAuth(***[0m
-2026-04-06T06:25:13.5601019Z [36;1m    keyFile: '/tmp/gdrive-creds.json',[0m
-2026-04-06T06:25:13.5601476Z [36;1m    scopes: ['https://www.googleapis.com/auth/drive'],[0m
-2026-04-06T06:25:13.5601901Z [36;1m  ***);[0m
-2026-04-06T06:25:13.5602168Z [36;1m[0m
-2026-04-06T06:25:13.5602510Z [36;1m  const drive = google.drive(*** version: 'v3', auth ***);[0m
-2026-04-06T06:25:13.5602994Z [36;1m  const folderId = process.env.GDRIVE_FOLDER_ID;[0m
-2026-04-06T06:25:13.5603374Z [36;1m[0m
-2026-04-06T06:25:13.5603764Z [36;1m  const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);[0m
-2026-04-06T06:25:13.5604314Z [36;1m  const fileName = `admin-app-$***timestamp***.apk`;[0m
-2026-04-06T06:25:13.5604695Z [36;1m[0m
-2026-04-06T06:25:13.5604942Z [36;1m  let folder;[0m
-2026-04-06T06:25:13.5605225Z [36;1m  try ***[0m
-2026-04-06T06:25:13.5605562Z [36;1m    const folderRes = await drive.files.get(***[0m
-2026-04-06T06:25:13.5605945Z [36;1m      fileId: folderId,[0m
-2026-04-06T06:25:13.5606305Z [36;1m      fields: 'id,name,mimeType,driveId',[0m
-2026-04-06T06:25:13.5606689Z [36;1m      supportsAllDrives: true,[0m
-2026-04-06T06:25:13.5607026Z [36;1m    ***);[0m
-2026-04-06T06:25:13.5607311Z [36;1m    folder = folderRes.data;[0m
-2026-04-06T06:25:13.5607704Z [36;1m    setOutput('folder_name', folder.name || '');[0m
-2026-04-06T06:25:13.5608121Z [36;1m    setOutput('folder_id', folder.id || '');[0m
-2026-04-06T06:25:13.5608780Z [36;1m    setOutput('folder_drive_id', folder.driveId || '');[0m
-2026-04-06T06:25:13.5609635Z [36;1m    setOutput('folder_in_shared_drive', folder.driveId ? 'yes' : 'no');[0m
-2026-04-06T06:25:13.5610222Z [36;1m    console.log(`Target folder: $***folder.name*** ($***folder.id***)`);[0m
-2026-04-06T06:25:13.5610681Z [36;1m  *** catch (err) ***[0m
-2026-04-06T06:25:13.5611015Z [36;1m    setOutput('folder_name', '');[0m
-2026-04-06T06:25:13.5611400Z [36;1m    setOutput('folder_id', folderId || '');[0m
-2026-04-06T06:25:13.5611793Z [36;1m    setOutput('folder_drive_id', '');[0m
-2026-04-06T06:25:13.5612208Z [36;1m    setOutput('folder_in_shared_drive', 'unknown');[0m
-2026-04-06T06:25:13.5612725Z [36;1m    console.error(`Folder lookup failed ($***err.code***): $***err.message***`);[0m
-2026-04-06T06:25:13.5613589Z [36;1m    console.error(`The service account cannot access GDRIVE_FOLDER_ID=$***folderId***.`);[0m
-2026-04-06T06:25:13.5614356Z [36;1m    console.error(`Fix: share the folder or its shared drive with "$***creds.client_email***".`);[0m
-2026-04-06T06:25:13.5614898Z [36;1m    process.exit(1);[0m
-2026-04-06T06:25:13.5615217Z [36;1m  ***[0m
-2026-04-06T06:25:13.5615471Z [36;1m[0m
-2026-04-06T06:25:13.5615737Z [36;1m  if (!folder.driveId) ***[0m
-2026-04-06T06:25:13.5616220Z [36;1m    console.error('The destination folder is in My Drive, not a Shared Drive.');[0m
-2026-04-06T06:25:13.5617016Z [36;1m    console.error('Google service accounts cannot upload files there because they do not have personal Drive storage quota.');[0m
-2026-04-06T06:25:13.5618023Z [36;1m    console.error('Fix: create or use a Shared Drive folder, add the service account to that Shared Drive, and set GDRIVE_FOLDER_ID to that folder ID.');[0m
-2026-04-06T06:25:13.5618724Z [36;1m    process.exit(1);[0m
-2026-04-06T06:25:13.5619314Z [36;1m  ***[0m
-2026-04-06T06:25:13.5619586Z [36;1m[0m
-2026-04-06T06:25:13.5619833Z [36;1m  try ***[0m
-2026-04-06T06:25:13.5620171Z [36;1m    const res = await drive.files.create(***[0m
-2026-04-06T06:25:13.5620555Z [36;1m      requestBody: ***[0m
-2026-04-06T06:25:13.5620878Z [36;1m        name: fileName,[0m
-2026-04-06T06:25:13.5621204Z [36;1m        parents: [folderId],[0m
-2026-04-06T06:25:13.5621533Z [36;1m      ***,[0m
-2026-04-06T06:25:13.5621815Z [36;1m      media: ***[0m
-2026-04-06T06:25:13.5622204Z [36;1m        mimeType: 'application/vnd.android.package-archive',[0m
-2026-04-06T06:25:13.5622704Z [36;1m        body: fs.createReadStream('admin-app.apk'),[0m
-2026-04-06T06:25:13.5623083Z [36;1m      ***,[0m
-2026-04-06T06:25:13.5623391Z [36;1m      fields: 'id, name, webViewLink',[0m
-2026-04-06T06:25:13.5623768Z [36;1m      supportsAllDrives: true,[0m
-2026-04-06T06:25:13.5624104Z [36;1m    ***);[0m
-2026-04-06T06:25:13.5624365Z [36;1m[0m
-2026-04-06T06:25:13.5624691Z [36;1m    console.log(`Uploaded: $***res.data.name***`);[0m
-2026-04-06T06:25:13.5625122Z [36;1m    console.log(`File ID: $***res.data.id***`);[0m
-2026-04-06T06:25:13.5625570Z [36;1m    console.log(`Link: $***res.data.webViewLink***`);[0m
-2026-04-06T06:25:13.5625969Z [36;1m  *** catch (err) ***[0m
-2026-04-06T06:25:13.5626415Z [36;1m    console.error(`Folder upload failed ($***err.code***): $***err.message***`);[0m
-2026-04-06T06:25:13.5627011Z [36;1m    if (err.code === 403 && String(err.message).includes('storage quota')) ***[0m
-2026-04-06T06:25:13.5627693Z [36;1m      console.error('The folder is reachable, but uploads are still being blocked by Drive quota rules.');[0m
-2026-04-06T06:25:13.5628629Z [36;1m      console.error('This usually means the folder is not actually inside a Shared Drive, or the service account is not a member of that Shared Drive.');[0m
-2026-04-06T06:25:13.5629917Z [36;1m      console.error(`Fix: add "$***creds.client_email***" directly to the Shared Drive and use a folder ID from inside that Shared Drive.`);[0m
-2026-04-06T06:25:13.5630582Z [36;1m    ***[0m
-2026-04-06T06:25:13.5630861Z [36;1m    process.exit(1);[0m
-2026-04-06T06:25:13.5631324Z [36;1m  ***[0m
-2026-04-06T06:25:13.5631588Z [36;1m***[0m
-2026-04-06T06:25:13.5631837Z [36;1m[0m
-2026-04-06T06:25:13.5632207Z [36;1mupload().catch(err => *** console.error(err); process.exit(1); ***);[0m
-2026-04-06T06:25:13.5632656Z [36;1mSCRIPT[0m
-2026-04-06T06:25:13.5632913Z [36;1m[0m
-2026-04-06T06:25:13.5633178Z [36;1mrm -f /tmp/gdrive-creds.json[0m
-2026-04-06T06:25:13.5662063Z shell: /usr/bin/bash -e ***0***
-2026-04-06T06:25:13.5662394Z env:
-2026-04-06T06:25:13.5662738Z   EXPO_TOKEN: ***
-2026-04-06T06:25:13.5672119Z   GDRIVE_CREDENTIALS: ***
-
-2026-04-06T06:25:13.5672511Z   GDRIVE_FOLDER_ID: ***
-2026-04-06T06:25:13.5672813Z ##[endgroup]
-2026-04-06T06:25:18.6864298Z Service account email: apk-uploader@manthanguruadminapp.iam.gserviceaccount.com
-2026-04-06T06:25:18.6866645Z (Grant this account access to the destination folder or shared drive)
-2026-04-06T06:25:18.6867455Z 
-2026-04-06T06:25:19.0301666Z Target folder: APK Builds (***)
-2026-04-06T06:25:19.0302615Z The destination folder is in My Drive, not a Shared Drive.
-2026-04-06T06:25:19.0303872Z Google service accounts cannot upload files there because they do not have personal Drive storage quota.
-2026-04-06T06:25:19.0305820Z Fix: create or use a Shared Drive folder, add the service account to that Shared Drive, and set GDRIVE_FOLDER_ID to that folder ID.
-2026-04-06T06:25:19.0418350Z ##[error]Process completed with exit code 1.
-2026-04-06T06:25:19.0457783Z ##[group]Run echo "APK artifact: admin-app-apk"
-2026-04-06T06:25:19.0458255Z [36;1mecho "APK artifact: admin-app-apk"[0m
-2026-04-06T06:25:19.0458765Z [36;1mecho "APK URL: https://expo.dev/artifacts/eas/pu8W1pncz13KtXNDQhGZik.apk"[0m
-2026-04-06T06:25:19.0459657Z [36;1mecho "Drive folder name: APK Builds"[0m
-2026-04-06T06:25:19.0460139Z [36;1mecho "Drive folder ID: ***"[0m
-2026-04-06T06:25:19.0460502Z [36;1mecho "Folder in Shared Drive: no"[0m
-2026-04-06T06:25:19.0460848Z [36;1mif [ -n "" ]; then[0m
-2026-04-06T06:25:19.0461172Z [36;1m  echo "Shared Drive ID: "[0m
-2026-04-06T06:25:19.0461498Z [36;1mfi[0m
-2026-04-06T06:25:19.0461742Z [36;1m[0m
-2026-04-06T06:25:19.0462014Z [36;1mif [ "failure" = "success" ]; then[0m
-2026-04-06T06:25:19.0462390Z [36;1m  echo "Google Drive upload: success"[0m
-2026-04-06T06:25:19.0462812Z [36;1m  echo "## Build Summary" >> "$GITHUB_STEP_SUMMARY"[0m
-2026-04-06T06:25:19.0463343Z [36;1m  echo "- APK artifact: admin-app-apk" >> "$GITHUB_STEP_SUMMARY"[0m
-2026-04-06T06:25:19.0464013Z [36;1m  echo "- APK URL: https://expo.dev/artifacts/eas/pu8W1pncz13KtXNDQhGZik.apk" >> "$GITHUB_STEP_SUMMARY"[0m
-2026-04-06T06:25:19.0464686Z [36;1m  echo "- Drive folder name: APK Builds" >> "$GITHUB_STEP_SUMMARY"[0m
-2026-04-06T06:25:19.0465297Z [36;1m  echo "- Drive folder ID: ***" >> "$GITHUB_STEP_SUMMARY"[0m
-2026-04-06T06:25:19.0465783Z [36;1m  echo "- Folder in Shared Drive: no" >> "$GITHUB_STEP_SUMMARY"[0m
-2026-04-06T06:25:19.0466195Z [36;1m  if [ -n "" ]; then[0m
-2026-04-06T06:25:19.0466566Z [36;1m    echo "- Shared Drive ID: " >> "$GITHUB_STEP_SUMMARY"[0m
-2026-04-06T06:25:19.0466951Z [36;1m  fi[0m
-2026-04-06T06:25:19.0467303Z [36;1m  echo "- Google Drive upload: success" >> "$GITHUB_STEP_SUMMARY"[0m
-2026-04-06T06:25:19.0467713Z [36;1melse[0m
-2026-04-06T06:25:19.0468173Z [36;1m  echo "::warning::Google Drive upload failed. APK is still available in artifact 'admin-app-apk'."[0m
-2026-04-06T06:25:19.0468774Z [36;1m  echo "## Build Summary" >> "$GITHUB_STEP_SUMMARY"[0m
-2026-04-06T06:25:19.0469547Z [36;1m  echo "- APK artifact: admin-app-apk" >> "$GITHUB_STEP_SUMMARY"[0m
-2026-04-06T06:25:19.0470202Z [36;1m  echo "- APK URL: https://expo.dev/artifacts/eas/pu8W1pncz13KtXNDQhGZik.apk" >> "$GITHUB_STEP_SUMMARY"[0m
-2026-04-06T06:25:19.0470850Z [36;1m  echo "- Drive folder name: APK Builds" >> "$GITHUB_STEP_SUMMARY"[0m
-2026-04-06T06:25:19.0471457Z [36;1m  echo "- Drive folder ID: ***" >> "$GITHUB_STEP_SUMMARY"[0m
-2026-04-06T06:25:19.0471930Z [36;1m  echo "- Folder in Shared Drive: no" >> "$GITHUB_STEP_SUMMARY"[0m
-2026-04-06T06:25:19.0472535Z [36;1m  if [ -n "" ]; then[0m
-2026-04-06T06:25:19.0472905Z [36;1m    echo "- Shared Drive ID: " >> "$GITHUB_STEP_SUMMARY"[0m
-2026-04-06T06:25:19.0473277Z [36;1m  fi[0m
-2026-04-06T06:25:19.0473857Z [36;1m  echo "- Google Drive upload: failed (service account uploads require a Shared Drive folder, not My Drive)" >> "$GITHUB_STEP_SUMMARY"[0m
-2026-04-06T06:25:19.0474487Z [36;1mfi[0m
-2026-04-06T06:25:19.0503419Z shell: /usr/bin/bash -e ***0***
-2026-04-06T06:25:19.0503754Z env:
-2026-04-06T06:25:19.0504093Z   EXPO_TOKEN: ***
-2026-04-06T06:25:19.0504368Z ##[endgroup]
-2026-04-06T06:25:19.0554621Z APK artifact: admin-app-apk
-2026-04-06T06:25:19.0555191Z APK URL: https://expo.dev/artifacts/eas/pu8W1pncz13KtXNDQhGZik.apk
-2026-04-06T06:25:19.0555769Z Drive folder name: APK Builds
-2026-04-06T06:25:19.0556355Z Drive folder ID: ***
-2026-04-06T06:25:19.0556684Z Folder in Shared Drive: no
-2026-04-06T06:25:19.0557861Z ##[warning]Google Drive upload failed. APK is still available in artifact 'admin-app-apk'.
-2026-04-06T06:25:19.0621356Z Post job cleanup.
-2026-04-06T06:25:19.2613151Z Cache hit occurred on the primary key node-cache-Linux-x64-npm-fe7e0d3e3aebb39cd8cc4410cf16cac96cbc815fd8580ba27ea69655ab2295c9, not saving cache.
-2026-04-06T06:25:19.2741554Z Post job cleanup.
-2026-04-06T06:25:19.3796157Z [command]/usr/bin/git version
-2026-04-06T06:25:19.3837305Z git version 2.53.0
-2026-04-06T06:25:19.3884535Z Temporarily overriding HOME='/home/runner/work/_temp/c511470f-4541-436c-88f1-fae63084b6c2' before making global git config changes
-2026-04-06T06:25:19.3886214Z Adding repository directory to the temporary git global config as a safe directory
-2026-04-06T06:25:19.3900290Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/MG-Mobile-admin/MG-Mobile-admin
-2026-04-06T06:25:19.3937233Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
-2026-04-06T06:25:19.3971989Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
-2026-04-06T06:25:19.4206910Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
-2026-04-06T06:25:19.4229328Z http.https://github.com/.extraheader
-2026-04-06T06:25:19.4242790Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
-2026-04-06T06:25:19.4275975Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
-2026-04-06T06:25:19.4501001Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
-2026-04-06T06:25:19.4533853Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
-2026-04-06T06:25:19.4879461Z Cleaning up orphan processes
-2026-04-06T06:25:19.5263962Z ##[warning]Node.js 20 actions are deprecated. The following actions are running on Node.js 20 and may not work as expected: actions/checkout@v4, actions/setup-node@v4, actions/upload-artifact@v4, expo/expo-github-action@v8. Actions will be forced to run with Node.js 24 by default starting June 2nd, 2026. Node.js 20 will be removed from the runner on September 16th, 2026. Please check if updated versions of these actions are available that support Node.js 24. To opt into Node.js 24 now, set the FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true environment variable on the runner or in your workflow file. Once Node.js 24 becomes the default, you can temporarily opt out by setting ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-04-07T09:47:15.881904711Z [inf]  🔌 Verifying database connection...
+2026-04-07T09:47:15.881904723Z [err]      ✗ Error: Unknown column 'city' in 'clients'
+2026-04-07T09:47:15.881913187Z [err]  ❌ Migration failed: Unknown column 'city' in 'clients'
+2026-04-07T09:47:15.881915479Z [inf]  ✅ Database connection verified
+2026-04-07T09:47:15.881919021Z [err]  ❌ Startup failed — shutting down Unknown column 'city' in 'clients'
+2026-04-07T09:47:15.881922780Z [inf]  🔄 Running all database migrations...
+2026-04-07T09:47:15.881929764Z [inf]  📋 Running schema.sql...
+2026-04-07T09:47:15.881931852Z [inf]    ⏳ 001-add-dob-clients.sql
+2026-04-07T09:47:15.881937857Z [inf]    ✓ 001-add-dob-clients.sql
+2026-04-07T09:47:15.881938311Z [inf]    ✓ payments
+2026-04-07T09:47:15.881942359Z [inf]    ⏳ 002-add-client-details.sql
+2026-04-07T09:47:15.881949483Z [inf]    ✓ claims
+2026-04-07T09:47:15.881950035Z [inf]    ✓ clients
+2026-04-07T09:47:15.881956050Z [inf]    ✓ documents
+2026-04-07T09:47:15.881959874Z [inf]    ✓ policies
+2026-04-07T09:47:15.881962883Z [inf]    ✓ activity_logs
+2026-04-07T09:47:15.881967586Z [inf]    ✓ renewals
+2026-04-07T09:47:15.881970087Z [inf]  📝 Running migration files...
+2026-04-07T09:47:15.922364289Z [inf]  Starting Container
+2026-04-07T09:47:16.877335820Z [err]  ❌ Startup failed — shutting down Unknown column 'city' in 'clients'
+2026-04-07T09:47:16.877352754Z [inf]  🔌 Verifying database connection...
+2026-04-07T09:47:16.877357236Z [inf]    ✓ payments
+2026-04-07T09:47:16.877357963Z [inf]  ✅ Database connection verified
+2026-04-07T09:47:16.877363523Z [inf]  🔄 Running all database migrations...
+2026-04-07T09:47:16.877364319Z [inf]    ✓ claims
+2026-04-07T09:47:16.877369939Z [inf]  📋 Running schema.sql...
+2026-04-07T09:47:16.877370068Z [inf]    ✓ documents
+2026-04-07T09:47:16.877372106Z [inf]    ⏳ 001-add-dob-clients.sql
+2026-04-07T09:47:16.877375444Z [inf]    ✓ clients
+2026-04-07T09:47:16.877377253Z [inf]    ✓ activity_logs
+2026-04-07T09:47:16.877382722Z [inf]    ✓ policies
+2026-04-07T09:47:16.877382840Z [inf]    ✓ 001-add-dob-clients.sql
+2026-04-07T09:47:16.877385678Z [inf]  📝 Running migration files...
+2026-04-07T09:47:16.877389703Z [inf]    ✓ renewals
+2026-04-07T09:47:16.877391162Z [inf]    ⏳ 002-add-client-details.sql
+2026-04-07T09:47:16.877395691Z [err]      ✗ Error: Unknown column 'city' in 'clients'
+2026-04-07T09:47:16.877399117Z [err]  ❌ Migration failed: Unknown column 'city' in 'clients'
+2026-04-07T09:47:17.891294238Z [inf]  🔌 Verifying database connection...
+2026-04-07T09:47:17.891299741Z [inf]    ⏳ 001-add-dob-clients.sql
+2026-04-07T09:47:17.891300142Z [err]  ❌ Startup failed — shutting down Unknown column 'city' in 'clients'
+2026-04-07T09:47:17.891303497Z [inf]  ✅ Database connection verified
+2026-04-07T09:47:17.891307369Z [inf]    ✓ renewals
+2026-04-07T09:47:17.891308682Z [inf]    ✓ 001-add-dob-clients.sql
+2026-04-07T09:47:17.891311387Z [inf]  🔄 Running all database migrations...
+2026-04-07T09:47:17.891315866Z [inf]    ⏳ 002-add-client-details.sql
+2026-04-07T09:47:17.891316131Z [inf]    ✓ payments
+2026-04-07T09:47:17.891318598Z [inf]  📋 Running schema.sql...
+2026-04-07T09:47:17.891322731Z [err]      ✗ Error: Unknown column 'city' in 'clients'
+2026-04-07T09:47:17.891325132Z [inf]    ✓ claims
+2026-04-07T09:47:17.891325857Z [inf]    ✓ clients
+2026-04-07T09:47:17.891328503Z [err]  ❌ Migration failed: Unknown column 'city' in 'clients'
+2026-04-07T09:47:17.891333256Z [inf]    ✓ documents
+2026-04-07T09:47:17.891333333Z [inf]    ✓ policies
+2026-04-07T09:47:17.891338410Z [inf]    ✓ activity_logs
+2026-04-07T09:47:17.891341996Z [inf]  📝 Running migration files...
+2026-04-07T09:47:18.912235297Z [inf]  🔌 Verifying database connection...
+2026-04-07T09:47:18.912238490Z [inf]  ✅ Database connection verified
+2026-04-07T09:47:18.912241832Z [inf]  🔄 Running all database migrations...
+2026-04-07T09:47:18.912245042Z [inf]  📋 Running schema.sql...
+2026-04-07T09:47:18.912248016Z [inf]    ✓ clients
+2026-04-07T09:47:18.912253006Z [inf]    ✓ policies
+2026-04-07T09:47:18.912256182Z [inf]    ✓ renewals
+2026-04-07T09:47:18.912259451Z [inf]    ✓ payments
+2026-04-07T09:47:18.912262851Z [inf]    ✓ claims
+2026-04-07T09:47:18.912266252Z [inf]    ✓ documents
+2026-04-07T09:47:18.912269394Z [inf]    ✓ activity_logs
+2026-04-07T09:47:18.912273061Z [inf]  📝 Running migration files...
+2026-04-07T09:47:18.912277784Z [inf]    ⏳ 001-add-dob-clients.sql
+2026-04-07T09:47:18.912280776Z [inf]    ✓ 001-add-dob-clients.sql
+2026-04-07T09:47:18.912283536Z [inf]    ⏳ 002-add-client-details.sql
+2026-04-07T09:47:18.912286553Z [err]      ✗ Error: Unknown column 'city' in 'clients'
+2026-04-07T09:47:18.912289622Z [err]  ❌ Migration failed: Unknown column 'city' in 'clients'
+2026-04-07T09:47:18.912292498Z [err]  ❌ Startup failed — shutting down Unknown column 'city' in 'clients'
+2026-04-07T09:47:19.909049977Z [inf]    ✓ claims
+2026-04-07T09:47:19.909056814Z [inf]    ✓ documents
+2026-04-07T09:47:19.909060753Z [inf]    ✓ activity_logs
+2026-04-07T09:47:19.909064336Z [inf]  📝 Running migration files...
+2026-04-07T09:47:19.909069352Z [inf]    ⏳ 001-add-dob-clients.sql
+2026-04-07T09:47:19.909074035Z [inf]    ✓ 001-add-dob-clients.sql
+2026-04-07T09:47:19.909077632Z [inf]    ⏳ 002-add-client-details.sql
+2026-04-07T09:47:19.909080806Z [err]      ✗ Error: Unknown column 'city' in 'clients'
+2026-04-07T09:47:19.909084034Z [err]  ❌ Migration failed: Unknown column 'city' in 'clients'
+2026-04-07T09:47:19.909087181Z [err]  ❌ Startup failed — shutting down Unknown column 'city' in 'clients'
+2026-04-07T09:47:19.909122154Z [inf]  🔌 Verifying database connection...
+2026-04-07T09:47:19.909126436Z [inf]  ✅ Database connection verified
+2026-04-07T09:47:19.909130459Z [inf]  🔄 Running all database migrations...
+2026-04-07T09:47:19.909134752Z [inf]  📋 Running schema.sql...
+2026-04-07T09:47:19.909139474Z [inf]    ✓ clients
+2026-04-07T09:47:19.909144267Z [inf]    ✓ policies
+2026-04-07T09:47:19.909150066Z [inf]    ✓ renewals
+2026-04-07T09:47:19.909155226Z [inf]    ✓ payments
+2026-04-07T09:47:20.929029945Z [inf]  🔌 Verifying database connection...
+2026-04-07T09:47:20.929510633Z [inf]  ✅ Database connection verified
+2026-04-07T09:47:20.930996296Z [inf]  🔄 Running all database migrations...
+2026-04-07T09:47:20.936934821Z [inf]  📋 Running schema.sql...
+2026-04-07T09:47:20.944288417Z [inf]    ✓ clients
+2026-04-07T09:47:20.944291625Z [inf]    ✓ policies
+2026-04-07T09:47:20.944295078Z [inf]    ✓ renewals
+2026-04-07T09:47:20.944298410Z [inf]    ✓ payments
+2026-04-07T09:47:20.945690420Z [inf]    ✓ claims
+2026-04-07T09:47:20.947671055Z [inf]    ✓ documents
+2026-04-07T09:47:20.947678085Z [inf]    ✓ activity_logs
+2026-04-07T09:47:20.947682667Z [inf]  📝 Running migration files...
+2026-04-07T09:47:20.947686654Z [inf]    ⏳ 001-add-dob-clients.sql
+2026-04-07T09:47:20.947690601Z [inf]    ✓ 001-add-dob-clients.sql
+2026-04-07T09:47:20.947695017Z [inf]    ⏳ 002-add-client-details.sql
+2026-04-07T09:47:20.949130047Z [err]      ✗ Error: Unknown column 'city' in 'clients'
+2026-04-07T09:47:20.949133427Z [err]  ❌ Migration failed: Unknown column 'city' in 'clients'
+2026-04-07T09:47:20.949136806Z [err]  ❌ Startup failed — shutting down Unknown column 'city' in 'clients'
+2026-04-07T09:47:22.056262664Z [inf]  🔌 Verifying database connection...
+2026-04-07T09:47:22.071433058Z [inf]  ✅ Database connection verified
+2026-04-07T09:47:22.071437078Z [inf]  🔄 Running all database migrations...
+2026-04-07T09:47:22.084541463Z [inf]  📋 Running schema.sql...
+2026-04-07T09:47:22.084547763Z [inf]    ✓ clients
+2026-04-07T09:47:22.084551545Z [inf]    ✓ policies
+2026-04-07T09:47:22.084555111Z [inf]    ✓ renewals
+2026-04-07T09:47:22.086445231Z [inf]    ✓ payments
+2026-04-07T09:47:22.086448517Z [inf]    ✓ claims
+2026-04-07T09:47:22.088420892Z [inf]    ✓ documents
+2026-04-07T09:47:22.088426019Z [inf]    ✓ activity_logs
+2026-04-07T09:47:22.088429177Z [inf]  📝 Running migration files...
+2026-04-07T09:47:22.088433296Z [inf]    ⏳ 001-add-dob-clients.sql
+2026-04-07T09:47:22.088436480Z [inf]    ✓ 001-add-dob-clients.sql
+2026-04-07T09:47:22.088439550Z [inf]    ⏳ 002-add-client-details.sql
+2026-04-07T09:47:22.090046763Z [err]      ✗ Error: Unknown column 'city' in 'clients'
+2026-04-07T09:47:22.090051327Z [err]  ❌ Migration failed: Unknown column 'city' in 'clients'
+2026-04-07T09:47:22.090054358Z [err]  ❌ Startup failed — shutting down Unknown column 'city' in 'clients'
+2026-04-07T09:47:23.206625701Z [inf]  🔌 Verifying database connection...
+2026-04-07T09:47:23.220212384Z [inf]  ✅ Database connection verified
+2026-04-07T09:47:23.220217433Z [inf]  🔄 Running all database migrations...
+2026-04-07T09:47:23.226784873Z [inf]  📋 Running schema.sql...
+2026-04-07T09:47:23.226791859Z [inf]    ✓ clients
+2026-04-07T09:47:23.226795864Z [inf]    ✓ policies
+2026-04-07T09:47:23.228340185Z [inf]    ✓ renewals
+2026-04-07T09:47:23.230008990Z [inf]    ✓ payments
+2026-04-07T09:47:23.230012980Z [inf]    ✓ claims
+2026-04-07T09:47:23.231902459Z [inf]    ✓ documents
+2026-04-07T09:47:23.231908875Z [inf]    ✓ activity_logs
+2026-04-07T09:47:23.231914605Z [inf]  📝 Running migration files...
+2026-04-07T09:47:23.233640025Z [err]      ✗ Error: Unknown column 'city' in 'clients'
+2026-04-07T09:47:23.233644310Z [err]  ❌ Migration failed: Unknown column 'city' in 'clients'
+2026-04-07T09:47:23.233652768Z [inf]    ⏳ 001-add-dob-clients.sql
+2026-04-07T09:47:23.233661499Z [inf]    ✓ 001-add-dob-clients.sql
+2026-04-07T09:47:23.233667508Z [inf]    ⏳ 002-add-client-details.sql
+2026-04-07T09:47:23.235356575Z [err]  ❌ Startup failed — shutting down Unknown column 'city' in 'clients'
+2026-04-07T09:47:24.298729803Z [inf]  🔌 Verifying database connection...
+2026-04-07T09:47:24.377801084Z [inf]  ✅ Database connection verified
+2026-04-07T09:47:24.377808263Z [inf]  🔄 Running all database migrations...
+2026-04-07T09:47:24.377812527Z [inf]  📋 Running schema.sql...
+2026-04-07T09:47:24.377816692Z [inf]    ✓ clients
+2026-04-07T09:47:24.377820793Z [inf]    ✓ policies
+2026-04-07T09:47:24.377825215Z [inf]    ✓ renewals
+2026-04-07T09:47:24.377829062Z [inf]    ✓ payments
+2026-04-07T09:47:24.377833064Z [inf]    ✓ claims
+2026-04-07T09:47:24.377836737Z [inf]    ✓ documents
+2026-04-07T09:47:24.377840614Z [inf]    ✓ activity_logs
+2026-04-07T09:47:24.377844846Z [inf]  📝 Running migration files...
+2026-04-07T09:47:24.377848617Z [inf]    ⏳ 001-add-dob-clients.sql
+2026-04-07T09:47:24.377852283Z [inf]    ✓ 001-add-dob-clients.sql
+2026-04-07T09:47:24.377855800Z [inf]    ⏳ 002-add-client-details.sql
+2026-04-07T09:47:24.377859462Z [err]      ✗ Error: Unknown column 'city' in 'clients'
+2026-04-07T09:47:24.377863217Z [err]  ❌ Migration failed: Unknown column 'city' in 'clients'
+2026-04-07T09:47:24.377866881Z [err]  ❌ Startup failed — shutting down Unknown column 'city' in 'clients'
+2026-04-07T09:47:25.502200621Z [inf]  🔌 Verifying database connection...
+2026-04-07T09:47:25.526182732Z [inf]  ✅ Database connection verified
+2026-04-07T09:47:25.526186944Z [inf]  🔄 Running all database migrations...
+2026-04-07T09:47:25.532475499Z [inf]  📋 Running schema.sql...
+2026-04-07T09:47:25.532478200Z [inf]    ✓ clients
+2026-04-07T09:47:25.532480768Z [inf]    ✓ policies
+2026-04-07T09:47:25.534083555Z [inf]    ✓ renewals
+2026-04-07T09:47:25.535757167Z [inf]    ✓ payments
+2026-04-07T09:47:25.535760111Z [inf]    ✓ claims
+2026-04-07T09:47:25.537537293Z [inf]    ✓ documents
+2026-04-07T09:47:25.539092307Z [inf]    ✓ activity_logs
+2026-04-07T09:47:25.539096211Z [inf]  📝 Running migration files...
+2026-04-07T09:47:25.539099049Z [inf]    ⏳ 001-add-dob-clients.sql
+2026-04-07T09:47:25.539101757Z [inf]    ✓ 001-add-dob-clients.sql
+2026-04-07T09:47:25.539104370Z [inf]    ⏳ 002-add-client-details.sql
+2026-04-07T09:47:25.540850133Z [err]      ✗ Error: Unknown column 'city' in 'clients'
+2026-04-07T09:47:25.540857411Z [err]  ❌ Migration failed: Unknown column 'city' in 'clients'
+2026-04-07T09:47:25.540862047Z [err]  ❌ Startup failed — shutting down Unknown column 'city' in 'clients'
+2026-04-07T09:47:26.944169728Z [inf]    ✓ claims
+2026-04-07T09:47:26.944175635Z [inf]    ✓ documents
+2026-04-07T09:47:26.944179031Z [inf]    ✓ activity_logs
+2026-04-07T09:47:26.944182390Z [inf]  📝 Running migration files...
+2026-04-07T09:47:26.944185610Z [inf]    ⏳ 001-add-dob-clients.sql
+2026-04-07T09:47:26.944188950Z [inf]    ✓ 001-add-dob-clients.sql
+2026-04-07T09:47:26.944191978Z [inf]    ⏳ 002-add-client-details.sql
+2026-04-07T09:47:26.944195458Z [err]      ✗ Error: Unknown column 'city' in 'clients'
+2026-04-07T09:47:26.944198378Z [err]  ❌ Migration failed: Unknown column 'city' in 'clients'
+2026-04-07T09:47:26.944201294Z [err]  ❌ Startup failed — shutting down Unknown column 'city' in 'clients'
+2026-04-07T09:47:26.944237573Z [inf]  🔌 Verifying database connection...
+2026-04-07T09:47:26.944240568Z [inf]  ✅ Database connection verified
+2026-04-07T09:47:26.944244769Z [inf]  🔄 Running all database migrations...
+2026-04-07T09:47:26.944248776Z [inf]  📋 Running schema.sql...
+2026-04-07T09:47:26.944253371Z [inf]    ✓ clients
+2026-04-07T09:47:26.944258603Z [inf]    ✓ policies
+2026-04-07T09:47:26.944262828Z [inf]    ✓ renewals
+2026-04-07T09:47:26.944267225Z [inf]    ✓ payments

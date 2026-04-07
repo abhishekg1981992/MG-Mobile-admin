@@ -92,3 +92,19 @@ CREATE TABLE IF NOT EXISTS activity_logs (
   meta JSON,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS insurance_providers (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  provider_code VARCHAR(50) NOT NULL UNIQUE,
+  name VARCHAR(255) NOT NULL,
+  address TEXT,
+  email VARCHAR(255),
+  company_contact VARCHAR(100),
+  sales_poc_name VARCHAR(255),
+  sales_poc_contact VARCHAR(100),
+  claim_poc_name VARCHAR(255),
+  claim_poc_contact VARCHAR(100),
+  renewal_poc_name VARCHAR(255),
+  renewal_poc_contact VARCHAR(100),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

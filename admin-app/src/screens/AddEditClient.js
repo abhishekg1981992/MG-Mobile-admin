@@ -1,12 +1,28 @@
 // src/screens/AddEditClient.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, ScrollView, Alert, KeyboardAvoidingView, Platform, TouchableOpacity } from 'react-native';
 import { TextInput, Button, Text } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { apiPost, apiPut } from '../services/api';
 
+// Convert any date value (ISO timestamp, YYYY-MM-DD, or DD-MM-YYYY) to DD-MM-YYYY
+function toDisplayDate(val) {
+  if (!val) return '';
+  const s = String(val);
+  // Already DD-MM-YYYY
+  if (/^\d{2}-\d{2}-\d{4}$/.test(s)) return s;
+  // ISO timestamp or YYYY-MM-DD
+  const d = new Date(s);
+  if (isNaN(d.getTime())) return '';
+  const day = String(d.getDate()).padStart(2, '0');
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const year = d.getFullYear();
+  return `${day}-${month}-${year}`;
+}
+
 export default function AddEditClient({ navigation, route }) {
   const existing = route.params?.client || null;
+  const scrollRef = useRef(null);
   const [form, setForm] = useState({
     name: existing?.name || '',
     phone: existing?.phone || '',
@@ -15,7 +31,7 @@ export default function AddEditClient({ navigation, route }) {
     city: existing?.city || '',
     state: existing?.state || '',
     pincode: existing?.pincode || '',
-    dob: existing?.dob || '',
+    dob: toDisplayDate(existing?.dob),
     nominee: existing?.nominee || '',
     notes: existing?.notes || '',
   });
@@ -44,18 +60,28 @@ export default function AddEditClient({ navigation, route }) {
     if (!form.dob) return new Date();
     // Parse DD-MM-YYYY to Date
     const parts = form.dob.split('-');
-    if (parts.length === 3) {
+    if (parts.length === 3 && parts[0].length === 2) {
       return new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
     }
-    return new Date();
+    // Fallback: try native parse (ISO / YYYY-MM-DD)
+    const d = new Date(form.dob);
+    return isNaN(d.getTime()) ? new Date() : d;
   };
 
   const formatDobForBackend = (dobDisplay) => {
     // Convert DD-MM-YYYY to YYYY-MM-DD for backend
     if (!dobDisplay) return null;
     const parts = dobDisplay.split('-');
-    if (parts.length === 3) {
+    if (parts.length === 3 && parts[0].length === 2) {
       return `${parts[2]}-${parts[1]}-${parts[0]}`;
+    }
+    // Might already be YYYY-MM-DD or ISO
+    const d = new Date(dobDisplay);
+    if (!isNaN(d.getTime())) {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
     }
     return null;
   };
@@ -88,11 +114,12 @@ export default function AddEditClient({ navigation, route }) {
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0}
     >
       <ScrollView 
-        contentContainerStyle={{ padding: 12, paddingBottom: 100 }} 
+        ref={scrollRef}
+        contentContainerStyle={{ padding: 12, paddingBottom: 150 }} 
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={true}
       >
@@ -111,12 +138,13 @@ export default function AddEditClient({ navigation, route }) {
             value={form.dob} 
             onChangeText={v => setForm({ ...form, dob: v })} 
             style={{marginTop:0}}
+            onFocus={() => scrollRef.current?.scrollTo({ y: 450, animated: true })}
             right={<TextInput.Icon icon="calendar" onPress={() => setShowDatePicker(true)} />}
           />
         </View>
         
-        <TextInput label="Nominee" value={form.nominee} onChangeText={v => setForm({ ...form, nominee: v })} style={{marginTop:12}} />
-        <TextInput label="Notes" value={form.notes} onChangeText={v => setForm({ ...form, notes: v })} multiline numberOfLines={3} style={{marginTop:12}} />
+        <TextInput label="Nominee" value={form.nominee} onChangeText={v => setForm({ ...form, nominee: v })} style={{marginTop:12}} onFocus={() => scrollRef.current?.scrollTo({ y: 520, animated: true })} />
+        <TextInput label="Notes" value={form.notes} onChangeText={v => setForm({ ...form, notes: v })} multiline numberOfLines={3} style={{marginTop:12}} onFocus={() => scrollRef.current?.scrollTo({ y: 580, animated: true })} />
         
         <Button mode="contained" onPress={handleSave} loading={loading} style={{marginTop:16}}>
           {existing ? 'Save Changes' : 'Create Client'}

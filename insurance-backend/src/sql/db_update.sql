@@ -1,0 +1,3 @@
+-- Pending incremental changes for existing databases.
+-- After successful deploy, replace contents with next set of changes.
+-- Duplicates are safe — runner skips ER_DUP_FIELDNAME, ER_TABLE_EXISTS_ERROR, ER_DUP_KEYNAME.

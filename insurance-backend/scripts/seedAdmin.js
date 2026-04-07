@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const username = process.env.SEED_ADMIN_USER || 'admin';
-const password = process.env.SEED_ADMIN_PASS || 'admin123';
+const password = process.env.SEED_ADMIN_PASS || 'admin';
 const name = process.env.SEED_ADMIN_NAME || 'Super Admin';
 
 const run = async () => {

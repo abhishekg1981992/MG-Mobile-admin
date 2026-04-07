@@ -4,10 +4,10 @@
   "type": "module",
   "main": "src/app.js",
   "scripts": {
-    "prestart": "npm run migrate",
     "start": "node src/app.js",
     "dev": "nodemon src/app.js",
-    "migrate": "node scripts/runMigrations.js",
+    "migrate": "node scripts/runMigrations.js update",
+    "migrate:full": "node scripts/runMigrations.js full",
     "seed-admin": "node scripts/seedAdmin.js",
     "migrate-excel": "node scripts/migrateExcel.js",
     "docs": "node src/swagger.js"

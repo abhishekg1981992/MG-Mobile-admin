@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ScrollView, Alert, View, TouchableOpacity } from 'react-native';
+import { ScrollView, Alert, View, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
 import { TextInput, Button, Text, Menu } from 'react-native-paper';
 import { apiPost, apiPut, apiGet } from '../services/api';
 
@@ -9,6 +9,29 @@ const STATUSES = ['active', 'lapsed', 'cancelled', 'matured'];
 
 export default function AddEditPolicy({ navigation, route }) {
   const existing = route.params?.policy || null;
+
+  const convertDateToDDMMYYYY = (dateStr) => {
+    if (!dateStr) return '';
+    // If already in DD-MM-YYYY format, return as-is
+    if (dateStr.includes('-') && dateStr.split('-')[0].length === 2) return dateStr;
+    // If in YYYY-MM-DD format, convert to DD-MM-YYYY
+    if (dateStr.includes('-') && dateStr.split('-')[0].length === 4) {
+      const parts = dateStr.split('-');
+      return `${parts[2]}-${parts[1]}-${parts[0]}`;
+    }
+    return dateStr;
+  };
+
+  const convertDateToYYYYMMDD = (dateStr) => {
+    if (!dateStr) return '';
+    // If in DD-MM-YYYY format, convert to YYYY-MM-DD
+    if (dateStr.includes('-') && dateStr.split('-')[0].length === 2) {
+      const parts = dateStr.split('-');
+      return `${parts[2]}-${parts[1]}-${parts[0]}`;
+    }
+    return dateStr;
+  };
+
   const [clients, setClients] = useState([]);
   const [clientQuery, setClientQuery] = useState(existing?.client_name || '');
   const [showClientSuggestions, setShowClientSuggestions] = useState(false);
@@ -23,8 +46,8 @@ export default function AddEditPolicy({ navigation, route }) {
     policy_type: existing?.policy_type || '',
     premium_amount: existing?.premium_amount?.toString() || '',
     sum_assured: existing?.sum_assured?.toString() || '',
-    start_date: existing?.start_date ? existing.start_date.substring(0, 10) : '',
-    end_date: existing?.end_date ? existing.end_date.substring(0, 10) : '',
+    start_date: existing?.start_date ? convertDateToDDMMYYYY(existing.start_date.substring(0, 10)) : '',
+    end_date: existing?.end_date ? convertDateToDDMMYYYY(existing.end_date.substring(0, 10)) : '',
     frequency: existing?.frequency || '',
     status: existing?.status || 'active',
   });
@@ -70,6 +93,8 @@ export default function AddEditPolicy({ navigation, route }) {
     }
     const payload = {
       ...form,
+      start_date: convertDateToYYYYMMDD(form.start_date),
+      end_date: convertDateToYYYYMMDD(form.end_date),
       premium_amount: parseFloat(form.premium_amount) || 0,
       sum_assured: parseFloat(form.sum_assured) || 0,
     };
@@ -91,8 +116,13 @@ export default function AddEditPolicy({ navigation, route }) {
   };
 
   return (
-    <ScrollView contentContainerStyle={{ padding: 12, paddingBottom: 40 }} keyboardShouldPersistTaps="handled">
-      <Text variant="titleLarge">{existing ? 'Edit Policy' : 'Add Policy'}</Text>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0}
+    >
+      <ScrollView contentContainerStyle={{ padding: 12, paddingBottom: 100 }} keyboardShouldPersistTaps="handled">
+        <Text variant="titleLarge">{existing ? 'Edit Policy' : 'Add Policy'}</Text>
 
       <View style={{ marginTop: 12, zIndex: 10 }}>
         <TextInput
@@ -139,8 +169,8 @@ export default function AddEditPolicy({ navigation, route }) {
 
       <TextInput label="Premium Amount" value={form.premium_amount} onChangeText={v => setForm({ ...form, premium_amount: v })} keyboardType="numeric" style={{ marginTop: 12 }} />
       <TextInput label="Sum Assured" value={form.sum_assured} onChangeText={v => setForm({ ...form, sum_assured: v })} keyboardType="numeric" style={{ marginTop: 12 }} />
-      <TextInput label="Start Date (YYYY-MM-DD)" value={form.start_date} onChangeText={v => setForm({ ...form, start_date: v })} style={{ marginTop: 12 }} />
-      <TextInput label="End Date (YYYY-MM-DD)" value={form.end_date} onChangeText={v => setForm({ ...form, end_date: v })} style={{ marginTop: 12 }} />
+      <TextInput label="Start Date (DD-MM-YYYY)" value={form.start_date} onChangeText={v => setForm({ ...form, start_date: v })} style={{ marginTop: 12 }} />
+      <TextInput label="End Date (DD-MM-YYYY)" value={form.end_date} onChangeText={v => setForm({ ...form, end_date: v })} style={{ marginTop: 12 }} />
 
       <Menu
         visible={freqMenuVisible}
@@ -183,6 +213,7 @@ export default function AddEditPolicy({ navigation, route }) {
       <Button mode="contained" onPress={handleSave} loading={loading} style={{ marginTop: 20 }}>
         {existing ? 'Save Changes' : 'Create Policy'}
       </Button>
-    </ScrollView>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }

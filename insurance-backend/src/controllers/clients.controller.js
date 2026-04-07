@@ -4,10 +4,13 @@ import path from 'path';
 
 export const createClient = async (req, res) => {
   try {
-    const { name, phone, email, address } = req.body;
-    const [result] = await pool.query('INSERT INTO clients (name, phone, email, address) VALUES (?,?,?,?)', [name, phone, email, address]);
+    const { name, phone, email, address, city, state, pincode, dob, nominee, notes } = req.body;
+    const [result] = await pool.query(
+      'INSERT INTO clients (name, phone, email, address, city, state, pincode, dob, nominee, notes) VALUES (?,?,?,?,?,?,?,?,?,?)',
+      [name, phone, email, address, city, state, pincode, dob || null, nominee, notes]
+    );
     const id = result.insertId;
-    return res.status(201).json({ id, name, phone, email, address });
+    return res.status(201).json({ id, name, phone, email, address, city, state, pincode, dob, nominee, notes });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: err.message });
@@ -44,9 +47,12 @@ export const getClientById = async (req, res) => {
 export const updateClient = async (req, res) => {
   try {
     const id = req.params.id;
-    const { name, phone, email, address } = req.body;
-    await pool.query('UPDATE clients SET name=?, phone=?, email=?, address=? WHERE id=?', [name, phone, email, address, id]);
-    return res.json({ id, name, phone, email, address });
+    const { name, phone, email, address, city, state, pincode, dob, nominee, notes } = req.body;
+    await pool.query(
+      'UPDATE clients SET name=?, phone=?, email=?, address=?, city=?, state=?, pincode=?, dob=?, nominee=?, notes=? WHERE id=?',
+      [name, phone, email, address, city, state, pincode, dob || null, nominee, notes, id]
+    );
+    return res.json({ id, name, phone, email, address, city, state, pincode, dob, nominee, notes });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: err.message });
@@ -270,8 +276,8 @@ export const importPoliciesFromExcel = async (req, res) => {
           } else {
             // Create new client
             const [clientResult] = await pool.query(
-              'INSERT INTO clients (name, phone, email, address) VALUES (?, ?, ?, ?)',
-              [name || 'N/A', cleanPhone || '', null, '']
+              'INSERT INTO clients (name, phone, email, address, city, state, pincode, dob, nominee, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+              [name || 'N/A', cleanPhone || '', null, '', '', '', '', null, '', '']
             );
             clientId = clientResult.insertId;
             results.clients_created++;
@@ -366,7 +372,7 @@ export const exportClientsAndPolicies = async (req, res) => {
   try {
     // Fetch all clients with their policies
     const [clients] = await pool.query(
-      'SELECT id, name, phone, email, address, created_at FROM clients ORDER BY created_at DESC'
+      'SELECT id, name, phone, email, address, city, state, pincode, dob, nominee, notes, created_at FROM clients ORDER BY created_at DESC'
     );
 
     if (clients.length === 0) {
@@ -392,6 +398,12 @@ export const exportClientsAndPolicies = async (req, res) => {
       'Phone': client.phone,
       'Email': client.email || '',
       'Address': client.address || '',
+      'City': client.city || '',
+      'State': client.state || '',
+      'Pincode': client.pincode || '',
+      'DOB': client.dob ? new Date(client.dob).toLocaleDateString('en-IN') : '',
+      'Nominee': client.nominee || '',
+      'Notes': client.notes || '',
       'Created Date': new Date(client.created_at).toLocaleDateString('en-IN')
     }));
 
@@ -402,6 +414,12 @@ export const exportClientsAndPolicies = async (req, res) => {
       { wch: 15 },  // Phone
       { wch: 25 },  // Email
       { wch: 30 },  // Address
+      { wch: 15 },  // City
+      { wch: 15 },  // State
+      { wch: 12 },  // Pincode
+      { wch: 12 },  // DOB
+      { wch: 20 },  // Nominee
+      { wch: 30 },  // Notes
       { wch: 15 }   // Created Date
     ];
 

@@ -14,7 +14,7 @@ import claimsRoutes from './routes/claims.routes.js';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import { scheduleRenewalJob } from './utils/cronJobs.js';
-import { runMigrations } from './db/migrate.js';
+import { runAllMigrations } from './db/migrateAll.js';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import logger from './utils/logger.js';
@@ -195,7 +195,7 @@ app.use((err, req, res, next) => {
 // Startup sequence: verify DB → run migrations → seed admin → listen
 // ---------------------------------------------------------------------------
 checkDatabaseConnection()
-  .then(() => runMigrations())
+  .then(() => runAllMigrations())
   .then(() => seedAdminUser())
   .then(() => {
     const server = app.listen(PORT, HOST, () => {

@@ -15,6 +15,12 @@ CREATE TABLE IF NOT EXISTS clients (
   phone VARCHAR(50),
   email VARCHAR(255),
   address TEXT,
+  city VARCHAR(255),
+  state VARCHAR(255),
+  pincode VARCHAR(20),
+  dob DATE,
+  nominee VARCHAR(255),
+  notes TEXT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

@@ -5,14 +5,97 @@ import * as DocumentPicker from 'expo-document-picker';
 import { Platform } from 'react-native';
 
 const jsonHeaders = { 'Content-Type': 'application/json' };
+const REQUEST_TIMEOUT_MS = 15000;
+
+export class ApiError extends Error {
+  constructor(message, code, status = null) {
+    super(message);
+    this.name = 'ApiError';
+    this.code = code;
+    this.status = status;
+  }
+}
+
+function mapNetworkError(error) {
+  const msg = String(error?.message || '').toLowerCase();
+
+  if (error?.name === 'AbortError' || msg.includes('timed out') || msg.includes('etimedout')) {
+    return new ApiError('Request timed out. Please check your internet connection and try again.', 'TIMEOUT');
+  }
+
+  if (msg.includes('network request failed') || msg.includes('failed to fetch') || msg.includes('network error')) {
+    return new ApiError('Unable to reach server. Please verify internet and backend URL.', 'NETWORK');
+  }
+
+  return new ApiError(error?.message || 'Unexpected network error', 'UNKNOWN');
+}
+
+async function requestJson(path, options = {}) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
+  try {
+    const res = await fetch(`${BASE_URL}${path}`, {
+      ...options,
+      signal: controller.signal,
+    });
+
+    let payload = null;
+    try {
+      payload = await res.json();
+    } catch {
+      payload = null;
+    }
+
+    if (!res.ok) {
+      throw new ApiError(payload?.error || 'Request failed', 'HTTP_ERROR', res.status);
+    }
+
+    return payload;
+  } catch (error) {
+    if (error instanceof ApiError) throw error;
+    throw mapNetworkError(error);
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+export async function checkSystemAvailability() {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
+  try {
+    const res = await fetch(`${BASE_URL}/health`, {
+      method: 'GET',
+      signal: controller.signal,
+    });
+
+    let payload = null;
+    try {
+      payload = await res.json();
+    } catch {
+      payload = null;
+    }
+
+    if (!res.ok || payload?.status === 'degraded') {
+      throw new ApiError('System unavailable', 'SERVICE_UNAVAILABLE', res.status);
+    }
+
+    return true;
+  } catch (error) {
+    if (error instanceof ApiError) throw error;
+    throw mapNetworkError(error);
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
 
 export async function login(username, password) {
-  const res = await fetch(`${BASE_URL}/api/auth/login`, {
+  return requestJson('/api/auth/login', {
     method: 'POST',
     headers: jsonHeaders,
     body: JSON.stringify({ username, password }),
   });
-  return res.json();
 }
 
 export async function setToken(token) {
@@ -31,26 +114,22 @@ async function authHeaders(isJson = true) {
 
 export async function apiGet(path) {
   const headers = await authHeaders();
-  const res = await fetch(`${BASE_URL}${path}`, { headers });
-  return res.json();
+  return requestJson(path, { headers });
 }
 
 export async function apiPost(path, body) {
   const headers = await authHeaders();
-  const res = await fetch(`${BASE_URL}${path}`, { method: 'POST', headers, body: JSON.stringify(body) });
-  return res.json();
+  return requestJson(path, { method: 'POST', headers, body: JSON.stringify(body) });
 }
 
 export async function apiPut(path, body) {
   const headers = await authHeaders();
-  const res = await fetch(`${BASE_URL}${path}`, { method: 'PUT', headers, body: JSON.stringify(body) });
-  return res.json();
+  return requestJson(path, { method: 'PUT', headers, body: JSON.stringify(body) });
 }
 
 export async function apiDelete(path) {
   const headers = await authHeaders();
-  const res = await fetch(`${BASE_URL}${path}`, { method: 'DELETE', headers });
-  return res.json();
+  return requestJson(path, { method: 'DELETE', headers });
 }
 
 /**

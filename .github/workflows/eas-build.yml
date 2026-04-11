@@ -1,4 +1,4 @@
-name: EAS Build (Android APK)
+name: Build Android APK
 
 on:
   push:
@@ -7,6 +7,7 @@ on:
     paths:
       - 'admin-app/**'
       - '.github/workflows/**'
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -30,40 +31,37 @@ jobs:
           cache: npm
           cache-dependency-path: admin-app/package-lock.json
 
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
       - name: Install dependencies
         run: npm ci
 
-      - name: Setup EAS CLI
-        uses: expo/expo-github-action@v8
-        with:
-          eas-version: latest
-          token: ${{ secrets.EXPO_TOKEN }}
+      - name: Generate native Android project
+        run: npx expo prebuild --platform android --clean --non-interactive
 
-      - name: Ensure EAS project is configured
-        run: eas init --id 394513c4-fa8f-4ecf-8f5e-e54e01dd0863 --non-interactive
-
-      - name: Build Android APK
-        id: eas_build
+      - name: Build APK with Gradle
         run: |
-          set -euo pipefail
-          echo "Starting EAS build..."
-          eas build --platform android --profile preview --non-interactive --json | tee /tmp/eas-output.json
-          APK_URL=$(jq -r '.[0].artifacts.buildUrl // empty' /tmp/eas-output.json)
-          if [ -z "$APK_URL" ]; then
-            echo "Could not extract APK URL from build output, fetching latest build..."
-            eas build:list --platform android --status finished --limit 1 --json | tee /tmp/eas-list.json
-            APK_URL=$(jq -r '.[0].artifacts.buildUrl' /tmp/eas-list.json)
-          fi
-          if [ -z "$APK_URL" ] || [ "$APK_URL" = "null" ]; then
-            echo "::error::Failed to get APK URL"
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleRelease --no-daemon -Dorg.gradle.jvmargs="-Xmx4g"
+
+      - name: Find and rename APK
+        id: apk
+        run: |
+          APK_PATH=$(find android/app/build/outputs -name "*.apk" | head -1)
+          if [ -z "$APK_PATH" ]; then
+            echo "::error::No APK found"
             exit 1
           fi
-          echo "apk_url=$APK_URL" >> "$GITHUB_OUTPUT"
-          echo "APK URL: $APK_URL"
-
-      - name: Download APK
-        run: |
-          curl -L -o admin-app.apk "${{ steps.eas_build.outputs.apk_url }}"
+          cp "$APK_PATH" admin-app.apk
+          echo "path=admin-app/admin-app.apk" >> "$GITHUB_OUTPUT"
           ls -lh admin-app.apk
 
       - name: Upload APK artifact
@@ -78,10 +76,8 @@ jobs:
         run: |
           TAG="build-$(date +'%Y%m%d-%H%M%S')-${{ github.run_number }}"
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
-          echo "Release tag: $TAG"
 
       - name: Create GitHub Release
-        id: release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.tag.outputs.tag }}
@@ -89,18 +85,12 @@ jobs:
           body: |
             Automated build from commit ${{ github.sha }}
             Branch: ${{ github.ref_name }}
-            EAS build URL: ${{ steps.eas_build.outputs.apk_url }}
           files: admin-app/admin-app.apk
           fail_on_unmatched_files: true
 
-      - name: Final build summary
+      - name: Build summary
         if: always()
         run: |
           echo "## Build Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Commit:** ${{ github.sha }}" >> "$GITHUB_STEP_SUMMARY"
           echo "- **APK artifact:** admin-app-apk" >> "$GITHUB_STEP_SUMMARY"
-          echo "- **EAS build URL:** ${{ steps.eas_build.outputs.apk_url }}" >> "$GITHUB_STEP_SUMMARY"
-          if [ "${{ steps.release.outcome }}" = "success" ]; then
-            echo "- **GitHub Release:** ${{ steps.release.outputs.url }}" >> "$GITHUB_STEP_SUMMARY"
-          else
-            echo "- **GitHub Release:** failed" >> "$GITHUB_STEP_SUMMARY"
-          fi

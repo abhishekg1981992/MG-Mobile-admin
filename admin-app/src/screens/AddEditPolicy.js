@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ScrollView, Alert, View, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
 import { TextInput, Button, Text, Menu } from 'react-native-paper';
-import { apiPost, apiPut, apiGet } from '../services/api';
+import { apiPost, apiPut, apiGet, extractArray } from '../services/api';
 
 const POLICY_TYPES = ['Life', 'Health', 'Motor', 'Home', 'Travel', 'Business', 'Other'];
 const FREQUENCIES = ['Monthly', 'Quarterly', 'Half-Yearly', 'Yearly', 'One-Time'];
@@ -61,9 +61,10 @@ export default function AddEditPolicy({ navigation, route }) {
   const fetchClients = async () => {
     try {
       const res = await apiGet('/api/clients');
-      setClients(Array.isArray(res) ? res : []);
+      const list = extractArray(res);
+      setClients(list);
       if (existing?.client_id && !clientQuery) {
-        const c = (Array.isArray(res) ? res : []).find(c => c.id === existing.client_id);
+        const c = list.find(c => c.id === existing.client_id);
         if (c) setClientQuery(c.name);
       }
     } catch (e) {

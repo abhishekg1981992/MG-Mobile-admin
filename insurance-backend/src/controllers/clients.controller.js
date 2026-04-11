@@ -19,7 +19,7 @@ export const createClient = async (req, res) => {
 
 export const getClients = async (req, res) => {
   try {
-    const [rows] = await pool.query('SELECT * FROM clients ORDER BY id DESC');
+    const [rows] = await pool.query('SELECT *, DATE_FORMAT(dob, \'%d-%m-%Y\') as dob FROM clients ORDER BY id DESC');
     return res.json(rows);
   } catch (err) {
     console.error(err);
@@ -30,10 +30,15 @@ export const getClients = async (req, res) => {
 export const getClientById = async (req, res) => {
   try {
     const id = req.params.id;
-    const [rows] = await pool.query('SELECT * FROM clients WHERE id = ?', [id]);
+    const [rows] = await pool.query('SELECT *, DATE_FORMAT(dob, \'%d-%m-%Y\') as dob FROM clients WHERE id = ?', [id]);
     if (rows.length === 0) return res.status(404).json({ error: 'Client not found' });
     const client = rows[0];
-    const [policies] = await pool.query('SELECT * FROM policies WHERE client_id = ?', [id]);
+    const [policies] = await pool.query('SELECT *, DATE_FORMAT(start_date, \'%d-%m-%Y\') as start_date, DATE_FORMAT(end_date, \'%d-%m-%Y\') as end_date FROM policies WHERE client_id = ?', [id]);
+    // Attach documents to each policy
+    for (const policy of policies) {
+      const [policyDocs] = await pool.query('SELECT id, filename, path, uploaded_at FROM documents WHERE policy_id=?', [policy.id]);
+      policy.documents = policyDocs;
+    }
     client.policies = policies;
     const [docs] = await pool.query('SELECT id, filename, path, uploaded_at FROM documents WHERE client_id=?', [id]);
     client.documents = docs;

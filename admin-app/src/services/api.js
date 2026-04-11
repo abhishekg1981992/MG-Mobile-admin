@@ -7,6 +7,53 @@ import { Platform } from 'react-native';
 const jsonHeaders = { 'Content-Type': 'application/json' };
 const REQUEST_TIMEOUT_MS = 15000;
 
+/**
+ * Safely extract an array from an API response, whether it's a raw array
+ * or wrapped in an object like { data: [...] }.
+ */
+export function extractArray(response) {
+  if (Array.isArray(response)) return response;
+  if (response && typeof response === 'object') {
+    for (const key of ['data', 'clients', 'policies', 'claims', 'renewals', 'payments', 'documents']) {
+      if (Array.isArray(response[key])) return response[key];
+    }
+    for (const val of Object.values(response)) {
+      if (Array.isArray(val)) return val;
+    }
+  }
+  return [];
+}
+
+/**
+ * Format a date string for display as DD-MM-YYYY.
+ * Handles ISO timestamps, YYYY-MM-DD, and DD-MM-YYYY (pass-through).
+ */
+export function formatDisplayDate(dateStr) {
+  if (!dateStr) return '—';
+  // Already DD-MM-YYYY
+  if (/^\d{2}-\d{2}-\d{4}$/.test(dateStr)) return dateStr;
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return dateStr;
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}-${month}-${year}`;
+}
+
+/**
+ * Parse a date string (DD-MM-YYYY, YYYY-MM-DD, or ISO) into a Date object.
+ */
+export function parseDate(dateStr) {
+  if (!dateStr) return null;
+  // DD-MM-YYYY
+  if (/^\d{2}-\d{2}-\d{4}$/.test(dateStr)) {
+    const [d, m, y] = dateStr.split('-');
+    return new Date(parseInt(y), parseInt(m) - 1, parseInt(d));
+  }
+  const date = new Date(dateStr);
+  return isNaN(date.getTime()) ? null : date;
+}
+
 export class ApiError extends Error {
   constructor(message, code, status = null) {
     super(message);
@@ -175,6 +222,48 @@ export async function uploadClientDocument(clientId) {
     return res.json();
   } catch (e) {
     console.error('Upload error', e);
+    return { error: e.message || String(e) };
+  }
+}
+
+/**
+ * Upload policy document using expo-document-picker.
+ * path: `/api/policies/:id/doc`
+ */
+export async function uploadPolicyDocument(policyId) {
+  try {
+    const result = await DocumentPicker.getDocumentAsync({ copyToCacheDirectory: true, multiple: false });
+    if (result.type !== 'success') return { cancelled: true };
+
+    const uri = result.uri;
+    const name = result.name || 'file';
+    let file;
+    if (Platform.OS === 'web') {
+      const r = await fetch(uri);
+      const blob = await r.blob();
+      file = new File([blob], name, { type: blob.type || 'application/octet-stream' });
+    } else {
+      file = {
+        uri,
+        name,
+        type: result.mimeType || 'application/octet-stream',
+      };
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const token = await getToken();
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    const res = await fetch(`${BASE_URL}/api/policies/${policyId}/doc`, {
+      method: 'POST',
+      headers,
+      body: formData,
+    });
+
+    return res.json();
+  } catch (e) {
+    console.error('Policy upload error', e);
     return { error: e.message || String(e) };
   }
 }

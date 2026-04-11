@@ -1,0 +1,176 @@
+## PART 1: Backend Changes (insurance-backend/)
+
+### 1A. Fix API Response Formats
+
+Audit all list endpoints and ensure they return raw JSON arrays, NOT wrapped objects like `{ data: [...] }`. The following endpoints must return `[...]` directly:
+
+- `GET /api/clients` → `[{id, name, phone, ...}, ...]`
+- `GET /api/policies/all-with-details` → `[{id, policy_number, client_name, ...}, ...]`
+- `GET /api/claims` → `[{id, policy_id, policy_number, ...}, ...]`
+- `GET /api/renewals/due` → `[{id, policy_number, client_name, ...}, ...]`
+
+Find the route handlers for each of these. If they do `res.json({ data: rows })` or `res.json({ clients: rows })`, change them to `res.json(rows)`.
+
+### 1B. Fix Date Fields
+
+Date fields (`dob`, `start_date`, `end_date`, `claim_date`, `payment_date`) are returned as ISO timestamps like `2024-01-15T00:00:00.000Z`. Format them as `DD-MM-YYYY` strings instead.
+
+For MySQL, use `DATE_FORMAT(column, '%d-%m-%Y')` in SELECT queries.
+For PostgreSQL, use `TO_CHAR(column, 'DD-MM-YYYY')`.
+For SQLite, use `strftime('%d-%m-%Y', column)`.
+
+Apply this to all date-only columns across clients, policies, claims, payments, and renewals queries.
+
+### 1C. Add Policy Documents Support
+
+Currently documents can only be attached to clients and claims. Add support for policy-level documents.
+
+**Database migration — add `policy_id` to documents table:**
+
+```sql
+ALTER TABLE documents ADD COLUMN policy_id INTEGER REFERENCES policies(id) ON DELETE CASCADE;
+```
+
+**New endpoint — Upload policy document:**
+
+```
+POST /api/policies/:id/doc
+```
+- Auth: staff+ role required
+- Body: FormData with a single `file` field
+- Implementation: reuse the same file storage logic as `POST /api/clients/:id/doc`, but set `policy_id` instead of `client_id`
+- Response: `{ id, filename, url, policy_id }`
+
+**Update `GET /api/policies/:id`:**
+
+Include a `documents` array in the response — query all documents where `policy_id = :id`:
+
+```json
+{
+  "id": 10,
+  "policy_number": "POL-001",
+  "provider": "LIC",
+  "documents": [
+    { "id": 5, "filename": "policy_copy.pdf", "url": "...", "policy_id": 10 }
+  ]
+}
+```
+
+**Update `GET /api/clients/:id`:**
+
+When returning client details with policies, nest documents under each policy too:
+
+```json
+{
+  "id": 1,
+  "name": "John",
+  "phone": "9876543210",
+  "documents": [
+    { "id": 1, "filename": "aadhaar.pdf", "url": "...", "client_id": 1 }
+  ],
+  "policies": [
+    {
+      "id": 10,
+      "policy_number": "POL-001",
+      "provider": "LIC",
+      "documents": [
+        { "id": 5, "filename": "policy_copy.pdf", "url": "...", "policy_id": 10 }
+      ]
+    }
+  ]
+}
+```
+
+For each policy in the client's policy list, query `SELECT * FROM documents WHERE policy_id = ?` and attach as a `documents` array.
+
+---
+
+## PART 2: Mobile Admin App Changes (admin-app/)
+
+### 2A. Handle API Response Format Safely
+
+Add a utility function and apply it to ALL list-fetching code so the app doesn't crash if the backend returns arrays vs wrapped objects:
+
+```javascript
+function extractArray(response) {
+  if (Array.isArray(response)) return response;
+  if (response && typeof response === 'object') {
+    for (const key of ['data', 'clients', 'policies', 'claims', 'renewals', 'payments', 'documents']) {
+      if (Array.isArray(response[key])) return response[key];
+    }
+    for (const val of Object.values(response)) {
+      if (Array.isArray(val)) return val;
+    }
+  }
+  return [];
+}
+```
+
+Find every place where the app fetches a list from the API and calls `.filter()`, `.map()`, `.length`, etc. on the response. Wrap the response in `extractArray()` first. This includes: clients list, policies list, claims list, renewals list, payments list.
+
+### 2B. Fix Date Display Format
+
+All dates should display as `DD-MM-YYYY`, not ISO timestamps or raw YYYY-MM-DD.
+
+Add a shared formatter:
+
+```javascript
+function formatDisplayDate(dateStr) {
+  if (!dateStr) return '—';
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return dateStr;
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}-${month}-${year}`;
+}
+```
+
+Apply this everywhere dates are displayed in the UI:
+- Client DOB
+- Policy start_date, end_date
+- Claim claim_date
+- Payment payment_date
+- Renewal due dates
+
+When SENDING dates to the API (form submissions), keep them in `YYYY-MM-DD` format.
+
+### 2C. Split Documents Into Client Documents + Policy Documents
+
+**Client Detail Screen:**
+
+Replace the single "Documents" section with two separate sections:
+
+1. **Client Documents** — shows documents with `client_id` set
+   - Upload via `POST /api/clients/:id/doc` (FormData, single file)
+   - Download/view button for each document
+
+2. **Policy Documents** — grouped by policy
+   - For each policy belonging to the client, show its documents (from the `documents` array nested under each policy in the API response)
+   - Each policy group shows: policy number + provider as header, then list of documents
+   - If no documents for a policy, show "No documents"
+
+**Policy Detail Screen:**
+
+- Add a "Documents" section showing all documents for that policy
+- Add an upload button that calls `POST /api/policies/:id/doc` with FormData (single file)
+- Show download/view button for each document
+- Only show upload button for staff+ roles
+
+---
+
+## Summary Checklist
+
+Backend (insurance-backend/):
+- [ ] List endpoints return raw arrays
+- [ ] Date fields formatted as DD-MM-YYYY
+- [ ] `policy_id` column added to documents table
+- [ ] `POST /api/policies/:id/doc` endpoint created
+- [ ] `GET /api/policies/:id` includes documents array
+- [ ] `GET /api/clients/:id` nests documents under each policy
+
+Mobile App (admin-app/):
+- [ ] `extractArray()` utility added and applied to all list fetches
+- [ ] `formatDisplayDate()` utility added and applied to all date displays
+- [ ] Client detail: documents split into Client Documents + Policy Documents
+- [ ] Policy detail: documents section with upload/download added

@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { ScrollView, Alert } from 'react-native';
-import { Text, Card, Button, ActivityIndicator } from 'react-native-paper';
-import { apiGet, apiDelete } from '../services/api';
+import { Text, Card, Button, List, ActivityIndicator } from 'react-native-paper';
+import { apiGet, apiDelete, formatDisplayDate, uploadPolicyDocument } from '../services/api';
 
 export default function PolicyDetails({ route, navigation }) {
   const id = route.params?.id;
   const [policy, setPolicy] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
 
   const fetchPolicy = async () => {
     setLoading(true);
@@ -44,6 +45,27 @@ export default function PolicyDetails({ route, navigation }) {
     ]);
   };
 
+  const doUpload = async () => {
+    setUploading(true);
+    try {
+      const res = await uploadPolicyDocument(id);
+      if (res && res.id) {
+        Alert.alert('Uploaded', 'File uploaded successfully');
+        fetchPolicy();
+      } else if (res && res.error) {
+        Alert.alert('Error', res.error);
+      } else if (res && res.cancelled) {
+        // nothing
+      } else {
+        Alert.alert('Upload result', JSON.stringify(res));
+      }
+    } catch (e) {
+      Alert.alert('Upload failed', e.message);
+    } finally {
+      setUploading(false);
+    }
+  };
+
   if (loading) return <ActivityIndicator style={{ flex: 1 }} animating />;
   if (!policy) return <Text variant="bodyMedium" style={{ padding: 16 }}>Policy not found</Text>;
 
@@ -58,14 +80,22 @@ export default function PolicyDetails({ route, navigation }) {
           <Text variant="bodyMedium">Sum Assured: ₹{policy.sum_assured}</Text>
           <Text variant="bodyMedium">Frequency: {policy.frequency}</Text>
           <Text variant="bodyMedium">Status: {policy.status}</Text>
-          <Text variant="bodyMedium" style={{ marginTop: 8 }}>Start: {policy.start_date ? new Date(policy.start_date).toLocaleDateString() : '—'}</Text>
-          <Text variant="bodyMedium">End: {policy.end_date ? new Date(policy.end_date).toLocaleDateString() : '—'}</Text>
+          <Text variant="bodyMedium" style={{ marginTop: 8 }}>Start: {formatDisplayDate(policy.start_date)}</Text>
+          <Text variant="bodyMedium">End: {formatDisplayDate(policy.end_date)}</Text>
         </Card.Content>
         <Card.Actions>
           <Button onPress={() => navigation.navigate('AddEditPolicy', { policy })}>Edit</Button>
           <Button mode="contained" buttonColor="#d32f2f" textColor="#fff" onPress={handleDelete}>Delete</Button>
         </Card.Actions>
       </Card>
+
+      <Text variant="titleLarge" style={{ marginTop: 4 }}>Documents</Text>
+      <Button mode="outlined" onPress={doUpload} loading={uploading} style={{ marginVertical: 8, alignSelf: 'flex-start' }}>
+        Upload Document
+      </Button>
+      {policy.documents?.length ? policy.documents.map(doc => (
+        <List.Item key={String(doc.id)} title={doc.filename} description={doc.path} left={props => <List.Icon {...props} icon="file-document" />} />
+      )) : <Text variant="bodyMedium" style={{ color: '#888' }}>No documents</Text>}
     </ScrollView>
   );
 }

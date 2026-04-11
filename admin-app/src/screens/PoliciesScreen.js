@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { View, FlatList, RefreshControl } from 'react-native';
 import { Searchbar, Card, Text, FAB, Button, ActivityIndicator } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { apiGet } from '../services/api';
+import { apiGet, extractArray } from '../services/api';
 
 export default function PoliciesScreen({ navigation }) {
   const insets = useSafeAreaInsets();
@@ -15,8 +15,7 @@ export default function PoliciesScreen({ navigation }) {
     setLoading(true);
     try {
       const res = await apiGet('/api/policies/all-with-details');
-      const data = res?.policies || res || [];
-      setPolicies(Array.isArray(data) ? data : []);
+      setPolicies(extractArray(res));
     } catch (e) {
       console.error(e);
     } finally {

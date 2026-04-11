@@ -26,7 +26,7 @@ export const createClaim = async (req, res) => {
 
 export const listClaims = async (req, res) => {
   try {
-    const [rows] = await pool.query('SELECT c.*, p.policy_number FROM claims c JOIN policies p ON c.policy_id=p.id ORDER BY c.id DESC');
+    const [rows] = await pool.query('SELECT c.*, DATE_FORMAT(c.claim_date, \'%d-%m-%Y\') as claim_date, p.policy_number FROM claims c JOIN policies p ON c.policy_id=p.id ORDER BY c.id DESC');
     return res.json(rows);
   } catch (err) {
     console.error(err);
@@ -37,7 +37,7 @@ export const listClaims = async (req, res) => {
 export const getClaimById = async (req, res) => {
   try {
     const id = req.params.id;
-    const [rows] = await pool.query('SELECT * FROM claims WHERE id=?', [id]);
+    const [rows] = await pool.query('SELECT *, DATE_FORMAT(claim_date, \'%d-%m-%Y\') as claim_date FROM claims WHERE id=?', [id]);
     if (!rows.length) return res.status(404).json({ error: 'Claim not found' });
     const claim = rows[0];
     const [docs] = await pool.query('SELECT * FROM documents WHERE claim_id=?', [id]);

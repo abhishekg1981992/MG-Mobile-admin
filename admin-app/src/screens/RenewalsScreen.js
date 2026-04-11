@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, FlatList, RefreshControl } from 'react-native';
 import { Card, Text, Button, ActivityIndicator, SegmentedButtons } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { apiGet } from '../services/api';
+import { apiGet, extractArray, formatDisplayDate, parseDate } from '../services/api';
 
 function isSameDay(d1, d2) {
   return d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate();
@@ -34,7 +34,7 @@ export default function RenewalsScreen({ navigation }) {
     setLoading(true);
     try {
       const res = await apiGet('/api/renewals/due');
-      setPolicies(Array.isArray(res) ? res : []);
+      setPolicies(extractArray(res));
     } catch (e) {
       console.error(e);
     } finally {
@@ -57,7 +57,8 @@ export default function RenewalsScreen({ navigation }) {
 
   const filtered = policies.filter(p => {
     if (!p.end_date) return false;
-    const endDate = new Date(p.end_date);
+    const endDate = parseDate(p.end_date);
+    if (!endDate) return false;
     endDate.setHours(0, 0, 0, 0);
     if (filter === 'today') return isSameDay(endDate, today);
     if (filter === 'week') return isThisWeek(endDate);
@@ -71,7 +72,7 @@ export default function RenewalsScreen({ navigation }) {
         <Text variant="titleMedium">{item.client_name || 'Unknown Client'}</Text>
         <Text variant="bodyMedium">{item.provider} • {item.policy_number}</Text>
         <Text variant="bodySmall" style={{ color: '#d32f2f', marginTop: 4 }}>
-          Due: {new Date(item.end_date).toLocaleDateString()}
+          Due: {formatDisplayDate(item.end_date)}
         </Text>
       </Card.Content>
     </Card>

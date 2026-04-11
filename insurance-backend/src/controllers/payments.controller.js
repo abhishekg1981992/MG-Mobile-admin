@@ -13,7 +13,7 @@ export const createPayment = async (req, res) => {
 
 export const listPayments = async (req, res) => {
   try {
-    const [rows] = await pool.query('SELECT p.*, pol.policy_number FROM payments p JOIN policies pol ON p.policy_id=pol.id ORDER BY payment_date DESC');
+    const [rows] = await pool.query('SELECT p.*, DATE_FORMAT(p.payment_date, \'%d-%m-%Y\') as payment_date, pol.policy_number FROM payments p JOIN policies pol ON p.policy_id=pol.id ORDER BY payment_date DESC');
     return res.json(rows);
   } catch (err) {
     console.error(err);

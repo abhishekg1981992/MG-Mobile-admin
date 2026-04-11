@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { View, FlatList, RefreshControl } from 'react-native';
 import { Searchbar, Card, Text, FAB, Button, ActivityIndicator } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { apiGet } from '../services/api';
+import { apiGet, extractArray } from '../services/api';
 
 export default function ClientsScreen({ navigation }) {
   const insets = useSafeAreaInsets();
@@ -16,7 +16,7 @@ export default function ClientsScreen({ navigation }) {
     setLoading(true);
     try {
       const res = await apiGet('/api/clients');
-      setClients(Array.isArray(res) ? res : []);
+      setClients(extractArray(res));
     } catch (e) {
       console.error(e);
     } finally {

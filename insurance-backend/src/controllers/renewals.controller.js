@@ -3,7 +3,7 @@ import { addDays } from '../utils/dateUtils.js';
 
 export const listRenewals = async (req, res) => {
   try {
-    const [rows] = await pool.query('SELECT r.*, p.policy_number, p.client_id FROM renewals r JOIN policies p ON r.policy_id=p.id ORDER BY renewal_date ASC');
+    const [rows] = await pool.query('SELECT r.*, DATE_FORMAT(r.renewal_date, \'%d-%m-%Y\') as renewal_date, p.policy_number, p.client_id FROM renewals r JOIN policies p ON r.policy_id=p.id ORDER BY renewal_date ASC');
     return res.json(rows);
   } catch (err) {
     console.error(err);
@@ -20,7 +20,7 @@ export const getRenewalsDue = async (req, res) => {
         p.provider,
         p.policy_type,
         p.premium_amount,
-        p.end_date,
+        DATE_FORMAT(p.end_date, '%d-%m-%Y') as end_date,
         p.status,
         c.name as client_name,
         c.phone as client_phone

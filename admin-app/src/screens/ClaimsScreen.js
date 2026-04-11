@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
-import { apiGet } from '../services/api';
+import { apiGet, extractArray, formatDisplayDate } from '../services/api';
 
 export default function ClaimsScreen() {
   const [loading, setLoading] = useState(true);
@@ -10,7 +10,7 @@ export default function ClaimsScreen() {
     (async () => {
       try {
         const res = await apiGet('/api/claims');
-        setClaims(res || []);
+        setClaims(extractArray(res));
       } catch (e) { console.error(e); }
       finally { setLoading(false); }
     })();
@@ -24,7 +24,7 @@ export default function ClaimsScreen() {
       <FlatList data={claims} keyExtractor={i => String(i.id)} renderItem={({item}) => (
         <View style={styles.card}>
           <Text style={styles.name}>{item.policy_number}</Text>
-          <Text>{item.claim_date} • {item.status} • ₹{item.amount}</Text>
+          <Text>{formatDisplayDate(item.claim_date)} • {item.status} • ₹{item.amount}</Text>
         </View>
       )} />
     </View>

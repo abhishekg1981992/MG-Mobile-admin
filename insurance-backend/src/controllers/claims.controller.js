@@ -1,6 +1,4 @@
 import pool from '../config/db.js';
-import fs from 'fs';
-import path from 'path';
 
 export const createClaim = async (req, res) => {
   try {
@@ -8,12 +6,11 @@ export const createClaim = async (req, res) => {
     const [result] = await pool.query('INSERT INTO claims (policy_id, claim_type, claim_date, description, amount, status) VALUES (?,?,?,?,?,?)', [policy_id, claim_type, claim_date, description, amount, 'submitted']);
     const claimId = result.insertId;
     // handle files
-    if (req.files && req.files.length>0) {
+    if (req.files && req.files.length > 0) {
       const insertDocs = [];
       for (const f of req.files) {
-        const newPath = path.join('uploads/claims', f.filename + '_' + f.originalname);
-        fs.renameSync(f.path, newPath);
-        insertDocs.push([claimId, newPath, f.originalname]);
+        // Cloudinary: f.path = HTTPS URL, f.filename = public_id
+        insertDocs.push([claimId, f.path, f.originalname]);
       }
       await pool.query('INSERT INTO documents (claim_id, path, filename) VALUES ?', [insertDocs]);
     }
@@ -58,12 +55,11 @@ export const updateClaim = async (req, res) => {
     values.push(id);
     if (fields) await pool.query(`UPDATE claims SET ${fields} WHERE id=?`, values);
     // files
-    if (req.files && req.files.length>0) {
+    if (req.files && req.files.length > 0) {
       const insertDocs = [];
       for (const f of req.files) {
-        const newPath = path.join('uploads/claims', f.filename + '_' + f.originalname);
-        fs.renameSync(f.path, newPath);
-        insertDocs.push([id, newPath, f.originalname]);
+        // Cloudinary: f.path = HTTPS URL, f.filename = public_id
+        insertDocs.push([id, f.path, f.originalname]);
       }
       await pool.query('INSERT INTO documents (claim_id, path, filename) VALUES ?', [insertDocs]);
     }

@@ -1,6 +1,7 @@
 import pool from '../config/db.js';
 import fs from 'fs';
 import path from 'path';
+import cloudinary from '../config/cloudinary.js';
 
 export const createClient = async (req, res) => {
   try {
@@ -79,30 +80,21 @@ export const uploadClientDocument = async (req, res) => {
   try {
     const clientId = req.params.id;
 
-    console.log("UPLOAD DEBUG -------------------");
-    console.log("clientId:", clientId);
-    console.log("req.file:", req.file);
-
     if (!req.file) {
-      console.log("No file received");
       return res.status(400).json({ error: "File not received" });
     }
 
-    const relativePath = `uploads/clients/${req.file.filename}`;
+    // Cloudinary: req.file.path = full HTTPS URL, req.file.filename = public_id
     const fileData = {
       filename: req.file.filename,
       originalname: req.file.originalname,
-      filepath: relativePath
+      filepath: req.file.path
     };
-
-    console.log("Inserting into DB:", fileData);
 
     const [result] = await pool.query(
       "INSERT INTO documents (client_id, filename, original_name, path) VALUES (?, ?, ?, ?)",
       [clientId, fileData.filename, fileData.originalname, fileData.filepath]
     );
-
-    console.log("DB INSERT RESULT:", result);
 
     res.json({ success: true, file: fileData });
   } catch (err) {
@@ -115,17 +107,14 @@ export const deleteClientDocument = async (req, res) => {
   try {
     const docId = req.params.docId;
 
-    // Try to delete file from disk if record exists
     const [rows] = await pool.query('SELECT * FROM documents WHERE id = ?', [docId]);
     if (rows.length > 0) {
-      const fs = await import('fs');
-      const filePath = rows[0].path;
-      if (filePath && fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
+      const publicId = rows[0].filename; // Cloudinary public_id stored in filename column
+      if (publicId) {
+        try { await cloudinary.uploader.destroy(publicId, { resource_type: 'raw' }); } catch {}
       }
     }
 
-    // Always delete from DB (even if file missing on disk)
     await pool.query('DELETE FROM documents WHERE id = ?', [docId]);
     return res.json({ success: true, message: 'Document deleted successfully' });
   } catch (err) {

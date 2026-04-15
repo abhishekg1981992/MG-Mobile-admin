@@ -1,5 +1,6 @@
 import pool from '../config/db.js';
 import path from 'path';
+import cloudinary from '../config/cloudinary.js';
 
 export const createPolicy = async (req, res) => {
   try {
@@ -106,11 +107,11 @@ export const uploadPolicyDocument = async (req, res) => {
       return res.status(400).json({ error: 'File not received' });
     }
 
-    const relativePath = `uploads/clients/${req.file.filename}`;
+    // Cloudinary: req.file.path = full HTTPS URL, req.file.filename = public_id
     const fileData = {
       filename: req.file.filename,
       originalname: req.file.originalname,
-      filepath: relativePath
+      filepath: req.file.path
     };
 
     const [result] = await pool.query(

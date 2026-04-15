@@ -13,6 +13,10 @@ import {
   exportClientsAndPolicies
 } from '../controllers/clients.controller.js';
 import upload from '../middleware/upload.js';
+import multer from 'multer';
+
+// Separate disk-based multer for Excel import (needs to read local file with XLSX)
+const uploadDisk = multer({ dest: 'uploads/tmp/' });
 
 const router = Router();
 
@@ -28,7 +32,7 @@ router.delete('/:id', auth, requireRole('admin'), deleteClient);
 router.post('/:id/doc', auth, requireRole('staff'), upload.single('file'), uploadClientDocument);
 
 // Excel import/export operations
-router.post('/import-excel', auth, requireRole('staff'), upload.single('file'), importPoliciesFromExcel);
+router.post('/import-excel', auth, requireRole('staff'), uploadDisk.single('file'), importPoliciesFromExcel);
 router.get('/export', auth, requireRole('staff'), exportClientsAndPolicies);
 
 export default router;

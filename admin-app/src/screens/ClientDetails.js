@@ -1,16 +1,18 @@
 // src/screens/ClientDetails.js
-import React, { useEffect, useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { ScrollView, View, Alert } from 'react-native';
 import { Text, Card, Button, List, ActivityIndicator, Divider } from 'react-native-paper';
-import { apiGet, uploadClientDocument, formatDisplayDate } from '../services/api';
+import { useFocusEffect } from '@react-navigation/native';
+import { apiGet, apiDelete, uploadClientDocument, formatDisplayDate } from '../services/api';
 
 export default function ClientDetails({ route, navigation }) {
   const id = route.params?.id;
   const [client, setClient] = useState(null);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [deletingDocId, setDeletingDocId] = useState(null);
 
-  const fetchClient = async () => {
+  const fetchClient = useCallback(async () => {
     setLoading(true);
     try {
       const res = await apiGet(`/api/clients/${id}`);
@@ -21,11 +23,13 @@ export default function ClientDetails({ route, navigation }) {
     } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    fetchClient();
   }, [id]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchClient();
+    }, [fetchClient])
+  );
 
   const doUpload = async () => {
     setUploading(true);
@@ -46,6 +50,28 @@ export default function ClientDetails({ route, navigation }) {
     } finally {
       setUploading(false);
     }
+  };
+
+  const doDeleteDoc = async (docId) => {
+    Alert.alert('Delete Document', 'Are you sure you want to delete this document?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: async () => {
+          setDeletingDocId(docId);
+          try {
+            await apiDelete(`/api/clients/doc/${docId}`);
+            Alert.alert('Success', 'Document deleted successfully');
+            fetchClient();
+          } catch (e) {
+            Alert.alert('Error', e.message || 'Failed to delete document');
+          } finally {
+            setDeletingDocId(null);
+          }
+        },
+      },
+    ]);
   };
 
   if (loading) return <ActivityIndicator style={{flex:1}} />;
@@ -84,7 +110,18 @@ export default function ClientDetails({ route, navigation }) {
 
       <Text variant="titleLarge" style={{ marginTop: 12 }}>Client Documents</Text>
       {client.documents?.length ? client.documents.map(doc => (
-        <List.Item key={String(doc.id)} title={doc.filename} description={doc.path} left={props => <List.Icon {...props} icon="file" />} />
+        <List.Item
+          key={String(doc.id)}
+          title={doc.original_name || doc.filename}
+          left={props => <List.Icon {...props} icon="file" />}
+          right={props => (
+            <List.Icon {...props} icon={deletingDocId === doc.id ? "loading" : "delete"}
+              color={deletingDocId === doc.id ? '#999' : '#d32f2f'}
+            />
+          )}
+          onPress={() => doDeleteDoc(doc.id)}
+          disabled={deletingDocId === doc.id}
+        />
       )) : <Text variant="bodyMedium">No client documents</Text>}
 
       <Text variant="titleLarge" style={{ marginTop: 12 }}>Policy Documents</Text>
@@ -94,7 +131,7 @@ export default function ClientDetails({ route, navigation }) {
             {p.policy_number} — {p.provider}
           </Text>
           {p.documents?.length ? p.documents.map(doc => (
-            <List.Item key={String(doc.id)} title={doc.filename} description={doc.path} left={props => <List.Icon {...props} icon="file-document" />} />
+            <List.Item key={String(doc.id)} title={doc.original_name || doc.filename} left={props => <List.Icon {...props} icon="file-document" />} />
           )) : <Text variant="bodySmall" style={{ marginLeft: 16, color: '#999' }}>No documents</Text>}
         </View>
       )) : <Text variant="bodyMedium">No policies</Text>}

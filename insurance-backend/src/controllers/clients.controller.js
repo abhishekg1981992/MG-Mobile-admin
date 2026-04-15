@@ -36,11 +36,11 @@ export const getClientById = async (req, res) => {
     const [policies] = await pool.query('SELECT *, DATE_FORMAT(start_date, \'%d-%m-%Y\') as start_date, DATE_FORMAT(end_date, \'%d-%m-%Y\') as end_date FROM policies WHERE client_id = ?', [id]);
     // Attach documents to each policy
     for (const policy of policies) {
-      const [policyDocs] = await pool.query('SELECT id, filename, path, uploaded_at FROM documents WHERE policy_id=?', [policy.id]);
+      const [policyDocs] = await pool.query('SELECT id, filename, original_name, path, uploaded_at FROM documents WHERE policy_id=?', [policy.id]);
       policy.documents = policyDocs;
     }
     client.policies = policies;
-    const [docs] = await pool.query('SELECT id, filename, path, uploaded_at FROM documents WHERE client_id=?', [id]);
+    const [docs] = await pool.query('SELECT id, filename, original_name, path, uploaded_at FROM documents WHERE client_id=?', [id]);
     client.documents = docs;
     return res.json(client);
   } catch (err) {
@@ -90,14 +90,15 @@ export const uploadClientDocument = async (req, res) => {
 
     const fileData = {
       filename: req.file.filename,
+      originalname: req.file.originalname,
       filepath: req.file.path
     };
 
     console.log("Inserting into DB:", fileData);
 
     const [result] = await pool.query(
-      "INSERT INTO documents (client_id, filename, path) VALUES (?, ?, ?)",
-      [clientId, fileData.filename, fileData.filepath]
+      "INSERT INTO documents (client_id, filename, original_name, path) VALUES (?, ?, ?, ?)",
+      [clientId, fileData.filename, fileData.originalname, fileData.filepath]
     );
 
     console.log("DB INSERT RESULT:", result);
@@ -106,6 +107,29 @@ export const uploadClientDocument = async (req, res) => {
   } catch (err) {
     console.error("UPLOAD ERROR:", err);
     res.status(500).json({ error: "Upload failed" });
+  }
+};
+
+export const deleteClientDocument = async (req, res) => {
+  try {
+    const docId = req.params.docId;
+
+    // Try to delete file from disk if record exists
+    const [rows] = await pool.query('SELECT * FROM documents WHERE id = ?', [docId]);
+    if (rows.length > 0) {
+      const fs = await import('fs');
+      const filePath = rows[0].path;
+      if (filePath && fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    }
+
+    // Always delete from DB (even if file missing on disk)
+    await pool.query('DELETE FROM documents WHERE id = ?', [docId]);
+    return res.json({ success: true, message: 'Document deleted successfully' });
+  } catch (err) {
+    console.error('Delete document error:', err);
+    return res.status(500).json({ error: 'Failed to delete document' });
   }
 };
 

@@ -1,8 +1,9 @@
 // src/screens/ClientsScreen.js
-import React, { useEffect, useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, FlatList, RefreshControl } from 'react-native';
 import { Searchbar, Card, Text, FAB, Button, ActivityIndicator } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useFocusEffect } from '@react-navigation/native';
 import { apiGet, extractArray } from '../services/api';
 
 export default function ClientsScreen({ navigation }) {
@@ -12,7 +13,7 @@ export default function ClientsScreen({ navigation }) {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  const fetchClients = async () => {
+  const fetchClients = useCallback(async () => {
     setLoading(true);
     try {
       const res = await apiGet('/api/clients');
@@ -22,11 +23,13 @@ export default function ClientsScreen({ navigation }) {
     } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    fetchClients();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchClients();
+    }, [fetchClients])
+  );
 
   const onRefresh = async () => {
     setRefreshing(true);

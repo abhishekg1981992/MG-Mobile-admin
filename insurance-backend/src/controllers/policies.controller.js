@@ -108,15 +108,16 @@ export const uploadPolicyDocument = async (req, res) => {
 
     const fileData = {
       filename: req.file.filename,
+      originalname: req.file.originalname,
       filepath: req.file.path
     };
 
     const [result] = await pool.query(
-      'INSERT INTO documents (policy_id, filename, path) VALUES (?, ?, ?)',
-      [policyId, fileData.filename, fileData.filepath]
+      'INSERT INTO documents (policy_id, filename, original_name, path) VALUES (?, ?, ?, ?)',
+      [policyId, fileData.filename, fileData.originalname, fileData.filepath]
     );
 
-    res.json({ id: result.insertId, filename: fileData.filename, url: fileData.filepath, policy_id: parseInt(policyId) });
+    res.json({ id: result.insertId, filename: fileData.filename, original_name: fileData.originalname, url: fileData.filepath, policy_id: parseInt(policyId) });
   } catch (err) {
     console.error('Policy upload error:', err);
     res.status(500).json({ error: 'Upload failed' });

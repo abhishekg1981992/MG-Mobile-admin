@@ -8,12 +8,16 @@ import {
   updateClient, 
   deleteClient, 
   uploadClientDocument,
+  deleteClientDocument,
   importPoliciesFromExcel,
   exportClientsAndPolicies
 } from '../controllers/clients.controller.js';
 import upload from '../middleware/upload.js';
 
 const router = Router();
+
+// Document operations (must be before /:id to avoid route conflicts)
+router.delete('/doc/:docId', auth, requireRole('staff'), deleteClientDocument);
 
 // Standard CRUD operations
 router.post('/', auth, requireRole('staff'), createClient);

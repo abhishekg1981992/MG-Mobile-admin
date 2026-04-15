@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { ScrollView, Alert } from 'react-native';
-import { Text, Card, Button, List, ActivityIndicator } from 'react-native-paper';
+import { ScrollView, Alert, View, Linking } from 'react-native';
+import { Text, Card, Button, List, ActivityIndicator, IconButton } from 'react-native-paper';
+import * as WebBrowser from 'expo-web-browser';
 import { apiGet, apiDelete, formatDisplayDate, uploadPolicyDocument } from '../services/api';
 
 export default function PolicyDetails({ route, navigation }) {
@@ -8,6 +9,7 @@ export default function PolicyDetails({ route, navigation }) {
   const [policy, setPolicy] = useState(null);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [deletingDocId, setDeletingDocId] = useState(null);
 
   const fetchPolicy = async () => {
     setLoading(true);
@@ -66,6 +68,42 @@ export default function PolicyDetails({ route, navigation }) {
     }
   };
 
+  const doDeleteDoc = (docId) => {
+    Alert.alert('Delete Document', 'Are you sure?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete', style: 'destructive',
+        onPress: async () => {
+          setDeletingDocId(docId);
+          try {
+            await apiDelete(`/api/clients/doc/${docId}`);
+            fetchPolicy();
+          } catch (e) {
+            Alert.alert('Error', e.message || 'Failed to delete document');
+          } finally {
+            setDeletingDocId(null);
+          }
+        },
+      },
+    ]);
+  };
+
+  const doViewDoc = async (doc) => {
+    const url = doc.path;
+    if (!url) return Alert.alert('Error', 'No file URL available');
+    try {
+      await WebBrowser.openBrowserAsync(url);
+    } catch {
+      Linking.openURL(url);
+    }
+  };
+
+  const doDownloadDoc = (doc) => {
+    const url = doc.path;
+    if (!url) return Alert.alert('Error', 'No file URL available');
+    Linking.openURL(url);
+  };
+
   if (loading) return <ActivityIndicator style={{ flex: 1 }} animating />;
   if (!policy) return <Text variant="bodyMedium" style={{ padding: 16 }}>Policy not found</Text>;
 
@@ -94,7 +132,25 @@ export default function PolicyDetails({ route, navigation }) {
         Upload Document
       </Button>
       {policy.documents?.length ? policy.documents.map(doc => (
-        <List.Item key={String(doc.id)} title={doc.filename} description={doc.path} left={props => <List.Icon {...props} icon="file-document" />} />
+        <List.Item
+          key={String(doc.id)}
+          title={doc.original_name || doc.filename}
+          left={props => <List.Icon {...props} icon="file-document" />}
+          right={() => (
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <IconButton icon="eye" size={20} onPress={() => doViewDoc(doc)} />
+              <IconButton icon="download" size={20} onPress={() => doDownloadDoc(doc)} />
+              <IconButton
+                icon="delete"
+                size={20}
+                iconColor="#d32f2f"
+                loading={deletingDocId === doc.id}
+                disabled={deletingDocId === doc.id}
+                onPress={() => doDeleteDoc(doc.id)}
+              />
+            </View>
+          )}
+        />
       )) : <Text variant="bodyMedium" style={{ color: '#888' }}>No documents</Text>}
     </ScrollView>
   );

@@ -1,8 +1,9 @@
 // src/screens/ClientDetails.js
 import React, { useState, useCallback } from 'react';
-import { ScrollView, View, Alert } from 'react-native';
-import { Text, Card, Button, List, ActivityIndicator, Divider } from 'react-native-paper';
+import { ScrollView, View, Alert, Linking } from 'react-native';
+import { Text, Card, Button, List, ActivityIndicator, Divider, IconButton } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
+import * as WebBrowser from 'expo-web-browser';
 import { apiGet, apiDelete, uploadClientDocument, formatDisplayDate } from '../services/api';
 
 export default function ClientDetails({ route, navigation }) {
@@ -74,6 +75,22 @@ export default function ClientDetails({ route, navigation }) {
     ]);
   };
 
+  const doViewDoc = async (doc) => {
+    const url = doc.path;
+    if (!url) return Alert.alert('Error', 'No file URL available');
+    try {
+      await WebBrowser.openBrowserAsync(url);
+    } catch {
+      Linking.openURL(url);
+    }
+  };
+
+  const doDownloadDoc = (doc) => {
+    const url = doc.path;
+    if (!url) return Alert.alert('Error', 'No file URL available');
+    Linking.openURL(url);
+  };
+
   if (loading) return <ActivityIndicator style={{flex:1}} />;
 
   if (!client) return <Text variant="bodyMedium">No client found</Text>;
@@ -114,13 +131,20 @@ export default function ClientDetails({ route, navigation }) {
           key={String(doc.id)}
           title={doc.original_name || doc.filename}
           left={props => <List.Icon {...props} icon="file" />}
-          right={props => (
-            <List.Icon {...props} icon={deletingDocId === doc.id ? "loading" : "delete"}
-              color={deletingDocId === doc.id ? '#999' : '#d32f2f'}
-            />
+          right={() => (
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <IconButton icon="eye" size={20} onPress={() => doViewDoc(doc)} />
+              <IconButton icon="download" size={20} onPress={() => doDownloadDoc(doc)} />
+              <IconButton
+                icon="delete"
+                size={20}
+                iconColor="#d32f2f"
+                loading={deletingDocId === doc.id}
+                disabled={deletingDocId === doc.id}
+                onPress={() => doDeleteDoc(doc.id)}
+              />
+            </View>
           )}
-          onPress={() => doDeleteDoc(doc.id)}
-          disabled={deletingDocId === doc.id}
         />
       )) : <Text variant="bodyMedium">No client documents</Text>}
 
@@ -131,7 +155,17 @@ export default function ClientDetails({ route, navigation }) {
             {p.policy_number} — {p.provider}
           </Text>
           {p.documents?.length ? p.documents.map(doc => (
-            <List.Item key={String(doc.id)} title={doc.original_name || doc.filename} left={props => <List.Icon {...props} icon="file-document" />} />
+            <List.Item
+              key={String(doc.id)}
+              title={doc.original_name || doc.filename}
+              left={props => <List.Icon {...props} icon="file-document" />}
+              right={() => (
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <IconButton icon="eye" size={20} onPress={() => doViewDoc(doc)} />
+                  <IconButton icon="download" size={20} onPress={() => doDownloadDoc(doc)} />
+                </View>
+              )}
+            />
           )) : <Text variant="bodySmall" style={{ marginLeft: 16, color: '#999' }}>No documents</Text>}
         </View>
       )) : <Text variant="bodyMedium">No policies</Text>}

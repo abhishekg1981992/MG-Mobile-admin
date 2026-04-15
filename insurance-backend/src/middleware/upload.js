@@ -6,7 +6,7 @@ const clientStorage = new CloudinaryStorage({
   cloudinary,
   params: {
     folder: 'mg-insurance/clients',
-    resource_type: 'auto',
+    resource_type: 'raw',
     use_filename: true,
     unique_filename: true,
   },
@@ -16,7 +16,7 @@ const claimsStorage = new CloudinaryStorage({
   cloudinary,
   params: {
     folder: 'mg-insurance/claims',
-    resource_type: 'auto',
+    resource_type: 'raw',
     use_filename: true,
     unique_filename: true,
   },

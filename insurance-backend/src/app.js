@@ -114,6 +114,11 @@ if (process.env.NODE_ENV !== 'production') {
   });
 }
 
+// Trust the first hop from Railway's reverse proxy so that express-rate-limit
+// can read the real client IP from the X-Forwarded-For header without throwing
+// a ValidationError.
+app.set('trust proxy', 1);
+
 // Basic rate limiter
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes

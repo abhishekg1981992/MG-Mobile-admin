@@ -106,10 +106,11 @@ export const uploadPolicyDocument = async (req, res) => {
       return res.status(400).json({ error: 'File not received' });
     }
 
+    const relativePath = `uploads/clients/${req.file.filename}`;
     const fileData = {
       filename: req.file.filename,
       originalname: req.file.originalname,
-      filepath: req.file.path
+      filepath: relativePath
     };
 
     const [result] = await pool.query(

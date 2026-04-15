@@ -98,6 +98,22 @@ app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static('uploads'));
 
+// Fallback: proxy to production when a file isn't found locally (dev only)
+if (process.env.NODE_ENV !== 'production') {
+  app.use('/uploads', async (req, res) => {
+    try {
+      const prodUrl = `https://mg-mobile-admin-production.up.railway.app/uploads${req.path}`;
+      const upstream = await fetch(prodUrl);
+      if (!upstream.ok) return res.status(upstream.status).json({ error: 'Not Found' });
+      res.set('content-type', upstream.headers.get('content-type'));
+      const buffer = Buffer.from(await upstream.arrayBuffer());
+      res.send(buffer);
+    } catch {
+      res.status(502).json({ error: 'Failed to fetch from production' });
+    }
+  });
+}
+
 // Basic rate limiter
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
